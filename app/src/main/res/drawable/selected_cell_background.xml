@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    &lt;!&ndash; Border &ndash;&gt;
+    <item>
+        <shape>
+            <solid android:color="#ffffff"></solid>
+
+        </shape>
+
+    </item>
+
+    &lt;!&ndash; Body &ndash;&gt;
+    <item>
+        <shape>
+
+            <solid android:color="#FF0E8BD2"></solid>
+
+
+        </shape>
+    </item>
+</layer-list>
+-->
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/calender" />
+    <corners android:radius="@dimen/_360sdp" />
+
+</shape>

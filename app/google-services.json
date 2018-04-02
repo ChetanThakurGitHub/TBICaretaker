@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "285876685050",
+    "firebase_url": "https://tbicaretaker-e76f6.firebaseio.com",
+    "project_id": "tbicaretaker-e76f6",
+    "storage_bucket": "tbicaretaker-e76f6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:285876685050:android:6876a6c8cfae36e6",
+        "android_client_info": {
+          "package_name": "tbi.com"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "285876685050-vqut3evb8o0dlmjj0a5pd164si5359nj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "tbi.com",
+            "certificate_hash": "7fd9061001ba87771764d100a2b80450c2e83219"
+          }
+        },
+        {
+          "client_id": "285876685050-k0n60b98sg2sd61tlfh23ff6vaehvd3m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4upmxZaElrEKsLEC_PrRw7lYgMI6lUlU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "285876685050-3ejetiv1h12ioamkqcv5l9j26psb3vo1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ios.TBICareTaker"
+              }
+            },
+            {
+              "client_id": "285876685050-k0n60b98sg2sd61tlfh23ff6vaehvd3m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

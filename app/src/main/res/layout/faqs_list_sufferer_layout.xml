@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minWidth="@dimen/_80sdp"
+    android:orientation="vertical"
+    android:padding="@dimen/_10sdp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <View
+            android:id="@+id/circle"
+            android:layout_width="@dimen/_10sdp"
+            android:layout_height="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:background="@drawable/circle_without_border_bg" />
+
+        <TextView
+            android:id="@+id/tv_for_faqTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_8sdp"
+            android:layout_marginRight="@dimen/_5sdp"
+            android:layout_toLeftOf="@+id/iv_for_check"
+            android:layout_toRightOf="@+id/circle"
+            android:fontFamily="@font/montserrat_regular"
+            android:text="Chetan thakur is ? dfjdlsfjdlsjfldksjfdklsfjdlskfjdljflljljlj"
+            android:textColor="@color/darkgray"
+            android:textSize="@dimen/_14ssp" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_for_descriptionFAQ"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:fontFamily="@font/montserrat_light"
+        android:textColor="@color/darkgray"
+        android:textSize="@dimen/_12ssp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:background="@color/lightgray" />
+
+</LinearLayout>

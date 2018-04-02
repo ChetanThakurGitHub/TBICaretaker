@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="colorPrimary">#5e8d93</color>
+    <color name="colorPrimaryDark">#5e8d93</color>
+    <color name="colorAccent">#333333</color>
+
+
+    <color name="darkgray">#333333</color>
+    <color name="lightgray">#a3a3a3</color>
+    <color name="seagreen">#5e8d93</color>
+    <color name="white">#ffffff</color>
+    <color name="green">#358132</color>
+    <color name="transparent">#00000000</color>
+    <color name="darkTransparent">#80000000</color>
+    <color name="calender">#265258</color>
+    <color name="chat">#ECECEC</color>
+
+    <color name="one">#cdefed</color>
+    <color name="one1">#fafdfd</color>
+    <color name="one2">#daf0f0</color>
+
+    <color name="black80p">#CC000000</color>
+    <color name="black70p">#B3000000</color>
+    <color name="black50p">#80000000</color>
+    <color name="white80p">#CCFFFFFF</color>
+    <color name="white65p">#A6FFFFFF</color>
+    <color name="white50p">#80FFFFFF</color>
+    <color name="black30p">#4D000000</color>
+    <color name="black20p">#33000000</color>
+    <color name="black03p">#03000000</color>
+</resources>
