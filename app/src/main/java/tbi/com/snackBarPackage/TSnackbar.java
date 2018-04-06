@@ -39,14 +39,14 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import tbi.com.R;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import tbi.com.R;
+
 
 ention(RetentionPolicy.SOURCE)
-
 public @interface Duration {
 }
 
@@ -94,7 +94,6 @@ static abstract class Callback {
 }
 
     ass Snackbabl
-
 public final class TSnackbar {
 
 
@@ -389,7 +388,6 @@ public final class TSnackbar {
     privtat
 
     @Nonnac
-
     public TSnackbar addIcon(int resource_id, int size) {
         final TextView tv = mView.getMessageView();
 

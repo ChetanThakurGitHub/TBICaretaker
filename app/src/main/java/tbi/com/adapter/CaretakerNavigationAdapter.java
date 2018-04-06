@@ -9,6 +9,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +32,12 @@ public class CaretakerNavigationAdapter extends RecyclerView.Adapter<CaretakerNa
     public int lastclick = -1;
     private List<NavigationListModel> navigationList;
     private CaretakerHomeActivity mContext;
+    private Session session;
 
     public CaretakerNavigationAdapter(ArrayList<NavigationListModel> navigationList, CaretakerHomeActivity mContext) {
         this.navigationList = navigationList;
         this.mContext = mContext;
+        session = new Session(mContext);
     }
 
     @Override
@@ -58,6 +64,28 @@ public class CaretakerNavigationAdapter extends RecyclerView.Adapter<CaretakerNa
                 holder.tv_for_nameTittle.setTextColor(Color.parseColor("#333333"));
             }
         }
+
+        if (position == 3) {
+            FirebaseDatabase.getInstance().getReference().child("massage_count").child(session.getUserID()).child("count").addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.getValue() != null) {
+                        String count = dataSnapshot.getValue().toString();
+                        if (count != null && !count.equals("0")) {
+                            holder.tv_for_messageCount.setVisibility(View.VISIBLE);
+                            holder.tv_for_messageCount.setText(count);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        } else {
+            holder.tv_for_messageCount.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -68,7 +96,7 @@ public class CaretakerNavigationAdapter extends RecyclerView.Adapter<CaretakerNa
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private ImageView iv_for_image;
-        private TextView tv_for_nameTittle;
+        private TextView tv_for_nameTittle, tv_for_messageCount;
         private View view_for_click;
         private LinearLayout layout_for_item;
 
@@ -79,12 +107,12 @@ public class CaretakerNavigationAdapter extends RecyclerView.Adapter<CaretakerNa
             tv_for_nameTittle = itemView.findViewById(R.id.tv_for_nameTittle);
             view_for_click = itemView.findViewById(R.id.view_for_click);
             layout_for_item = itemView.findViewById(R.id.layout_for_item);
+            tv_for_messageCount = itemView.findViewById(R.id.tv_for_messageCount);
             layout_for_item.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-
             switch (v.getId()) {
                 case R.id.layout_for_item:
                     view_for_click.setVisibility(View.VISIBLE);
@@ -93,7 +121,7 @@ public class CaretakerNavigationAdapter extends RecyclerView.Adapter<CaretakerNa
                         notifyDataSetChanged();
                         Session session = new Session(mContext);
                         if (session.getLogin().equals("0")) {
-                            ((CaretakerHomeActivity) mContext).replaceFragment(AddSuffererFragment.newInstance(""), true, R.id.framlayout);
+                            mContext.replaceFragment(AddSuffererFragment.newInstance(), true, R.id.framlayout);
                             mContext.tv_for_tittle.setText(R.string.add_sufferer);
                             mContext.iv_for_calender.setVisibility(View.GONE);
                             mContext.iv_for_menu.setVisibility(View.VISIBLE);
@@ -102,7 +130,7 @@ public class CaretakerNavigationAdapter extends RecyclerView.Adapter<CaretakerNa
                             mContext.iv_for_more.setVisibility(View.GONE);
                             mContext.iv_for_delete.setVisibility(View.GONE);
                         } else {
-                            ((CaretakerHomeActivity) mContext).replaceFragment(MySuffererFragment.newInstance(""), true, R.id.framlayout);
+                            mContext.replaceFragment(MySuffererFragment.newInstance(), true, R.id.framlayout);
                             mContext.tv_for_tittle.setText(R.string.my_sufferer);
                             mContext.iv_for_calender.setVisibility(View.GONE);
                             mContext.iv_for_menu.setVisibility(View.VISIBLE);
@@ -115,7 +143,7 @@ public class CaretakerNavigationAdapter extends RecyclerView.Adapter<CaretakerNa
                     } else if (getAdapterPosition() == 1) {
                         lastclick = getAdapterPosition();
                         notifyDataSetChanged();
-                        ((CaretakerHomeActivity) mContext).replaceFragment(ReminderCaretakerFragment.newInstance(""), false, R.id.framlayout);
+                        mContext.replaceFragment(ReminderCaretakerFragment.newInstance(), false, R.id.framlayout);
                         mContext.drawer.closeDrawers();
                         mContext.tv_for_tittle.setText(R.string.reminders);
                         mContext.iv_for_calender.setVisibility(View.VISIBLE);
@@ -127,7 +155,7 @@ public class CaretakerNavigationAdapter extends RecyclerView.Adapter<CaretakerNa
                     } else if (getAdapterPosition() == 2) {
                         lastclick = getAdapterPosition();
                         notifyDataSetChanged();
-                        ((CaretakerHomeActivity) mContext).replaceFragment(MyProfileCaretakerFragment.newInstance(""), true, R.id.framlayout);
+                        mContext.replaceFragment(MyProfileCaretakerFragment.newInstance(), true, R.id.framlayout);
                         mContext.drawer.closeDrawers();
                         mContext.tv_for_tittle.setText(R.string.my_profile);
                         mContext.iv_for_calender.setVisibility(View.GONE);
@@ -139,7 +167,7 @@ public class CaretakerNavigationAdapter extends RecyclerView.Adapter<CaretakerNa
                     } else if (getAdapterPosition() == 3) {
                         lastclick = getAdapterPosition();
                         notifyDataSetChanged();
-                        ((CaretakerHomeActivity) mContext).replaceFragment(MessageCaretakerFragment.newInstance(""), true, R.id.framlayout);
+                        mContext.replaceFragment(MessageCaretakerFragment.newInstance(), true, R.id.framlayout);
                         mContext.drawer.closeDrawers();
                         mContext.tv_for_tittle.setText(R.string.messages);
                         mContext.iv_for_calender.setVisibility(View.GONE);
@@ -148,10 +176,12 @@ public class CaretakerNavigationAdapter extends RecyclerView.Adapter<CaretakerNa
                         mContext.iv_for_edit.setVisibility(View.GONE);
                         mContext.iv_for_more.setVisibility(View.GONE);
                         mContext.iv_for_delete.setVisibility(View.GONE);
+                        mContext.iv_for_block.setVisibility(View.VISIBLE);
+                        mContext.iv_for_deleteChat.setVisibility(View.VISIBLE);
                     } else if (getAdapterPosition() == 4) {
                         lastclick = getAdapterPosition();
                         notifyDataSetChanged();
-                        ((CaretakerHomeActivity) mContext).replaceFragment(NotificationsCaretakerFragment.newInstance(""), true, R.id.framlayout);
+                        mContext.replaceFragment(NotificationsCaretakerFragment.newInstance(), true, R.id.framlayout);
                         mContext.drawer.closeDrawers();
                         mContext.tv_for_tittle.setText(R.string.notifications);
                         mContext.iv_for_calender.setVisibility(View.GONE);
@@ -163,7 +193,7 @@ public class CaretakerNavigationAdapter extends RecyclerView.Adapter<CaretakerNa
                     } else if (getAdapterPosition() == 5) {
                         lastclick = getAdapterPosition();
                         notifyDataSetChanged();
-                        ((CaretakerHomeActivity) mContext).replaceFragment(FaqsCaretakerFragment.newInstance(""), true, R.id.framlayout);
+                        mContext.replaceFragment(FaqsCaretakerFragment.newInstance(), true, R.id.framlayout);
                         mContext.drawer.closeDrawers();
                         mContext.tv_for_tittle.setText(R.string.faq_s);
                         mContext.iv_for_calender.setVisibility(View.GONE);

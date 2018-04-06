@@ -46,21 +46,10 @@ public class MySuffererFragment extends Fragment implements View.OnClickListener
         // Required empty public constructor
     }
 
-    public static MySuffererFragment newInstance(String param1) {
-        MySuffererFragment fragment = new MySuffererFragment();
-        Bundle args = new Bundle();
-        args.putString("param1", param1);
-        fragment.setArguments(args);
-        return fragment;
+    public static MySuffererFragment newInstance() {
+        return new MySuffererFragment();
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            String mParam1 = getArguments().getString("param1");
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -123,17 +112,10 @@ public class MySuffererFragment extends Fragment implements View.OnClickListener
                             }
                             tv_for_name.setText(mySuffererList.name);
                             tv_for_email.setText(mySuffererList.email);
-                            if (mySuffererList.age.equals("")) {
-                                tv_for_age.setText(R.string.na);
-                            } else {
-                                tv_for_age.setText(mySuffererList.age);
-                            }
-                            if (mySuffererList.blood_group.equals("")) {
 
-                                tv_for_bloodGroup.setText(R.string.na);
-                            } else {
-                                tv_for_bloodGroup.setText(mySuffererList.blood_group);
-                            }
+                            tv_for_age.setText(mySuffererList.age.equals("") ? getResources().getString(R.string.na) : mySuffererList.age);
+                            tv_for_bloodGroup.setText(mySuffererList.blood_group.equals("") ? getResources().getString(R.string.na) : mySuffererList.blood_group);
+
                             if (mySuffererList.weight.equals("")) {
 
                                 tv_for_weight.setText(R.string.na);
@@ -153,11 +135,11 @@ public class MySuffererFragment extends Fragment implements View.OnClickListener
                             }
 
                         } else {
-                            Constant.snackbar(mainLayout, message);
+                            ((CaretakerHomeActivity) getContext()).replaceFragment(AddSuffererFragment.newInstance(), true, R.id.framlayout);
                         }
 
                     } catch (Throwable t) {
-                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                        t.printStackTrace();
                     }
                     pDialog.dismiss();
                 }
@@ -174,7 +156,7 @@ public class MySuffererFragment extends Fragment implements View.OnClickListener
 
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<String, String>();
+                    Map<String, String> headers = new HashMap<>();
                     headers.put("authToken", session.getAuthToken());
                     return headers;
                 }
@@ -216,7 +198,7 @@ public class MySuffererFragment extends Fragment implements View.OnClickListener
                         String message = jsonObject.getString("message");
 
                         if (status.equalsIgnoreCase("success")) {
-                            ((CaretakerHomeActivity) getActivity()).replaceFragment(ReminderCaretakerFragment.newInstance(""), false, R.id.framlayout);
+                            ((CaretakerHomeActivity) getActivity()).replaceFragment(ReminderCaretakerFragment.newInstance(), false, R.id.framlayout);
                             session.setLogin("0");
                             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                         } else {
@@ -224,7 +206,7 @@ public class MySuffererFragment extends Fragment implements View.OnClickListener
                         }
 
                     } catch (Throwable t) {
-                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                        t.printStackTrace();
                     }
                     pDialog.dismiss();
                 }
@@ -239,7 +221,7 @@ public class MySuffererFragment extends Fragment implements View.OnClickListener
             }) {
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<String, String>();
+                    Map<String, String> headers = new HashMap<>();
                     headers.put("authToken", session.getAuthToken());
                     return headers;
                 }

@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import tbi.com.R;
 import tbi.com.broadcastreceiver.activity.NetworkErrorActivity;
@@ -99,7 +98,7 @@ public class UserSelectionActivity extends AppCompatActivity implements View.OnC
             registerReceiver(netSwitchReceiver, new IntentFilter(Constant.NETWORK_SWITCH_FILTER));
             //do action
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -109,7 +108,7 @@ public class UserSelectionActivity extends AppCompatActivity implements View.OnC
         try {
             unregisterReceiver(netSwitchReceiver);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 }

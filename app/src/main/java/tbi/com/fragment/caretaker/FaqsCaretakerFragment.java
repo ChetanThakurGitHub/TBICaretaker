@@ -57,20 +57,8 @@ public class FaqsCaretakerFragment extends Fragment implements View.OnClickListe
         // Required empty public constructor
     }
 
-    public static FaqsCaretakerFragment newInstance(String param1) {
-        FaqsCaretakerFragment fragment = new FaqsCaretakerFragment();
-        Bundle args = new Bundle();
-        args.putString("param1", param1);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            String mParam1 = getArguments().getString("param1");
-        }
+    public static FaqsCaretakerFragment newInstance() {
+        return new FaqsCaretakerFragment();
     }
 
     @Override
@@ -108,7 +96,7 @@ public class FaqsCaretakerFragment extends Fragment implements View.OnClickListe
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                loadNextDataFromApi(page, totalItemsCount);
+                getAllFAQListAPI();
             }
         };
         recycler_view.addOnScrollListener(scrollListener);
@@ -116,9 +104,6 @@ public class FaqsCaretakerFragment extends Fragment implements View.OnClickListe
         return view;
     }
 
-    public void loadNextDataFromApi(int page, int totalItemsCount) {
-        getAllFAQListAPI();
-    } // pagination
 
     private void initView(View view) {
         recycler_view = view.findViewById(R.id.recycler_view);
@@ -175,7 +160,7 @@ public class FaqsCaretakerFragment extends Fragment implements View.OnClickListe
                         }
 
                     } catch (Throwable t) {
-                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                        t.printStackTrace();
                     }
                 }
             }, new Response.ErrorListener() {
@@ -191,7 +176,7 @@ public class FaqsCaretakerFragment extends Fragment implements View.OnClickListe
 
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<String, String>();
+                    Map<String, String> headers = new HashMap<>();
                     headers.put("authToken", session.getAuthToken());
                     return headers;
                 }

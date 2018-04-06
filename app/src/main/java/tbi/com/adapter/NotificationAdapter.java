@@ -24,10 +24,8 @@ import tbi.com.fragment.sufferer.FaqsSuffererFragment;
 import tbi.com.fragment.sufferer.MyCaretakerFragment;
 import tbi.com.fragment.sufferer.ReminderSuffererFragment;
 import tbi.com.model.NotificationList;
+import tbi.com.util.Constant;
 
-/**
- * Created by abc on 12/02/2018.
- */
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder> {
     private List<NotificationList> notificationLists;
@@ -65,21 +63,22 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             e.printStackTrace();
         }
 
-        if (dayMonth[0].equals("")) {
-            holder.tv_for_date.setText(R.string.na);
-        } else {
+        if (dayMonth[0] != null && dayMonth[0].length() != 0) {
             holder.tv_for_date.setText(dayMonth[0]);
-        }
-        if (dayMonth[1].isEmpty()) {
-            holder.tv_for_month.setText(R.string.na);
         } else {
+            holder.tv_for_date.setText(R.string.na);
+        }
+        if (dayMonth[1] != null && dayMonth[1].length() != 0) {
             holder.tv_for_month.setText(dayMonth[1]);
+        } else {
+            holder.tv_for_month.setText(R.string.na);
         }
         if (notificationList.reminder_time.isEmpty()) {
             holder.tv_for_time.setText(R.string.na);
         } else {
             holder.tv_for_time.setText(notificationList.reminder_time);
         }
+
         holder.tv_for_tittleList.setText(notificationList.reminder_title);
         holder.tv_for_description.setText(notificationList.reminder_description);
         holder.tv_for_timeNoti.setText(notificationList.crd);
@@ -115,16 +114,17 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 @Override
                 public void onClick(View v) {
                     NotificationList notificationList = notificationLists.get(getAdapterPosition());
-                    if (notificationList.type.equals("Reminder_add") | notificationList.equals("Reminder_delete") | notificationList.equals("Reminder_update") | notificationList.equals("Sufferer_removed")) {
-                        ((SuffererHomeActivity) mContext).replaceFragment(ReminderSuffererFragment.newInstance(""), true, R.id.framlayout);
+                    Constant.notificationStatus(mContext, notificationList.notificationId);
+                    if (notificationList.type.equals("Reminder_add") | notificationList.type.equals("Reminder_delete") | notificationList.equals("Reminder_update") | notificationList.type.equals("Sufferer_removed")) {
+                        ((SuffererHomeActivity) mContext).replaceFragment(ReminderSuffererFragment.newInstance(), true, R.id.framlayout);
                     } else if (notificationList.type.equals("Sufferer_add")) {
-                        ((SuffererHomeActivity) mContext).replaceFragment(MyCaretakerFragment.newInstance(""), true, R.id.framlayout);
+                        ((SuffererHomeActivity) mContext).replaceFragment(MyCaretakerFragment.newInstance(), true, R.id.framlayout);
                     } else if (notificationList.type.equals("Reminder_done")) {
-                        ((CaretakerHomeActivity) mContext).replaceFragment(ReminderCaretakerFragment.newInstance(""), true, R.id.framlayout);
+                        ((CaretakerHomeActivity) mContext).replaceFragment(ReminderCaretakerFragment.newInstance(), true, R.id.framlayout);
                     } else if (notificationList.type.equals("Caretaker_removed")) {
-                        ((CaretakerHomeActivity) mContext).replaceFragment(AddSuffererFragment.newInstance(""), true, R.id.framlayout);
+                        ((CaretakerHomeActivity) mContext).replaceFragment(AddSuffererFragment.newInstance(), true, R.id.framlayout);
                     } else if (notificationList.type.equals("FAQS_Add") | notificationList.type.equals("FAQS_Update") | notificationList.type.equals("FAQS_Delete")) {
-                        ((SuffererHomeActivity) mContext).replaceFragment(FaqsSuffererFragment.newInstance(""), true, R.id.framlayout);
+                        ((SuffererHomeActivity) mContext).replaceFragment(FaqsSuffererFragment.newInstance(), true, R.id.framlayout);
                     }
                 }
             });

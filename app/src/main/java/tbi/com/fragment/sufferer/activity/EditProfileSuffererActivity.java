@@ -132,7 +132,7 @@ public class EditProfileSuffererActivity extends AppCompatActivity implements Vi
                 break;
             case R.id.layout_for_changePassword:
                 DailogView dailogView = new DailogView();
-                dailogView.changePasswordDailog(this, mainLayout);
+                dailogView.changePasswordDailog(this);
                 break;
             case R.id.iv_profile_image:
                 selectImage();
@@ -286,7 +286,7 @@ public class EditProfileSuffererActivity extends AppCompatActivity implements Vi
                         }
 
                     } catch (Throwable t) {
-                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                        t.printStackTrace();
                     }
 
                     pDialog.dismiss();
@@ -304,7 +304,7 @@ public class EditProfileSuffererActivity extends AppCompatActivity implements Vi
             }) {
                 @Override
                 protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<String, String>();
+                    Map<String, String> params = new HashMap<>();
                     params.put("full_name", fullName);
                     params.put("email", email);
                     params.put("userType", "1");
@@ -319,14 +319,14 @@ public class EditProfileSuffererActivity extends AppCompatActivity implements Vi
 
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<String, String>();
+                    Map<String, String> headers = new HashMap<>();
                     headers.put("authToken", session.getAuthToken());
                     return headers;
                 }
 
                 @Override
                 protected Map<String, DataPart> getByteData() {
-                    Map<String, DataPart> params = new HashMap<String, DataPart>();
+                    Map<String, DataPart> params = new HashMap<>();
                     if (profileImageBitmap != null) {
                         params.put("profileImage", new VolleyMultipartRequest.DataPart("profilePic.jpg", AppHelper.getFileDataFromDrawable(profileImageBitmap), "image/jpeg"));
                     }
@@ -393,7 +393,7 @@ public class EditProfileSuffererActivity extends AppCompatActivity implements Vi
         dialog.setCancelable(false);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-        et_for_gender.setText("Male");
+        et_for_gender.setText(R.string.male);
 
         ImageView layout_for_crossDailog = dialog.findViewById(R.id.layout_for_crossDailog);
         Button btn_for_yes = dialog.findViewById(R.id.btn_for_yes);

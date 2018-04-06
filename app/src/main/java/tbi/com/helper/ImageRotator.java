@@ -11,12 +11,6 @@ import android.util.Log;
 
 import java.io.IOException;
 
-/**
- * Author: Dharmraj Acharya
- * Date: 06/09/2016
- * Email: dharmrajacharya@gmail.com
- */
-
 public final class ImageRotator {
 
     private static final String TAG = ImageRotator.class.getSimpleName();

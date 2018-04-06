@@ -27,7 +27,6 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import tbi.com.R;
 import tbi.com.activity.UserSelectionActivity;
@@ -39,10 +38,8 @@ import tbi.com.vollyemultipart.VolleySingleton;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-
 
 public class Constant {
 
@@ -77,6 +74,7 @@ public class Constant {
     public static final int GALLERY = 3;
     public static final int SPLESH_TIME = 3000;
     public static final int RequestPermissionCode = 1;
+    public static final int RESULT_OK = -1;
     public static final int CALLING = 15;
     public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 12;
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 8;
@@ -223,10 +221,6 @@ public class Constant {
         con.startActivity(intent);
     }
 
-    public static File getTemporalFile(Context context) {
-        return new File(context.getExternalCacheDir(), "tbi.jpeg");
-    }
-
     public static void myDialog(Context context, Dialog pDialog) {
         pDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         pDialog.setCancelable(false);
@@ -234,7 +228,6 @@ public class Constant {
         pDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         //pDialog.show();
     }
-
 
     public static void snackbar(View coordinatorLayout, String message) {
         Snackbar snackbar = Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_LONG);
@@ -250,12 +243,46 @@ public class Constant {
 
     public static void snackbarTop(View coordinatorLayout, String message) {
         TSnackbar snackbar = TSnackbar.make(coordinatorLayout, message, TSnackbar.LENGTH_LONG);
-        snackbar.setActionTextColor(Color.parseColor("#FF419CF5"));
+        snackbar.setActionTextColor(Color.parseColor("#5e8d93"));
         View snackbarView = snackbar.getView();
-        snackbarView.setBackgroundColor(Color.parseColor("#FF419CF5"));
-        TextView textView = (TextView) snackbarView.findViewById(R.id.snackbar_text);
-        textView.setTextColor(Color.WHITE);
+        snackbarView.setBackgroundColor(Color.parseColor("#5e8d93"));
+        TextView textView = snackbarView.findViewById(R.id.snackbar_text);
+        textView.setTextColor(Color.RED);
         snackbar.show();
+    }
+
+    public static void notificationStatus(final Context activity, final String notificationId) {
+        if (Utils.isNetworkAvailable(activity)) {
+
+            VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(Request.Method.POST, Constant.URL_WITH_LOGIN + "notificationReadStauts", new Response.Listener<NetworkResponse>() {
+                @Override
+                public void onResponse(NetworkResponse response) {
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    error.printStackTrace();
+                }
+            }) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("notificationId", notificationId);
+                    return params;
+                }
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    Session session = new Session(activity);
+                    headers.put("authToken", session.getAuthToken());
+                    return headers;
+                }
+            };
+            multipartRequest.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VolleySingleton.getInstance(activity).addToRequestQueue(multipartRequest);
+        }
     }
 
 }

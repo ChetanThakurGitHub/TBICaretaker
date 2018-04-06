@@ -23,10 +23,10 @@ import tbi.com.helper.MonthDecoratorData;
 import tbi.com.session.Session;
 
 public class GridAdapter extends ArrayAdapter {
-    String date, year, month;
-    boolean clicked;
-    List<MonthDecoratorData.ResultMonthBean> resultMonth;
-    Activity activity;
+    private String date, year, month;
+    private boolean clicked;
+    private List<MonthDecoratorData.ResultMonthBean> resultMonth;
+    private Activity activity;
     private LayoutInflater mInflater;
     private List<DateModel> monthlyDates;
     private Calendar currentDate;
@@ -86,7 +86,7 @@ public class GridAdapter extends ArrayAdapter {
                             updateRequestList(year + "/" + month + "/" + date);
 
                         } catch (ClassCastException e) {
-
+                            e.printStackTrace();
                         }
 
                         view.setBackgroundResource(R.drawable.selected_cell_background);
@@ -119,14 +119,10 @@ public class GridAdapter extends ArrayAdapter {
                 date = String.valueOf(dayValue);
                 month = String.valueOf(displayMonth);
                 year = String.valueOf(displayYear);
-                if (month.length() > 1) {
-
-                } else {
+                if (month.length() < 1) {
                     month = "0" + month;
                 }
-                if (date.length() > 1) {
-
-                } else {
+                if (date.length() < 1) {
                     date = "0" + date;
                 }
                 String currentDate = year + "-" + month + "-" + date;
@@ -175,10 +171,7 @@ public class GridAdapter extends ArrayAdapter {
                         clicked = true;
                         if (i == position) {
                             String is_selected = monthlyDates.get(i).getIsSelected();
-                            if (is_selected.equals("yes")) {
-
-
-                            } else {
+                            if (!is_selected.equals("yes")) {
                                 is_selected = "yes";
                                 monthlyDates.get(i).setIsSelected(is_selected);
                                 date = cellNumber.getText().toString();
@@ -229,7 +222,7 @@ public class GridAdapter extends ArrayAdapter {
                 }
             }
         } catch (OutOfMemoryError outOfMemoryError) {
-
+            outOfMemoryError.printStackTrace();
         }
     }
 

@@ -107,6 +107,19 @@
     <string name="add_new">Add new</string>
     <string name="question">Question</string>
     <string name="answer">Answer</string>
+    <string name="write_a_message">Write a message....</string>
+    <string name="no_chat_found">No chat found</string>
+    <string name="image">Image</string>
+    <string name="upload">Uploading...</string>
+    <string name="block">Block</string>
+    <string name="block_user">Do you want to block this user</string>
+    <string name="unblock_user">Do you want to unblock this user</string>
+    <string name="delete_chat">Do you want to delete chat</string>
+    <string name="male">Male</string>
+    <string name="no_sufferer">Please add sufferer</string>
+    <string name="no_caretaker">No caretaker added you</string>
+    <string name="enter_text">Please enter text</string>
+    <string name="a">A-positive</string>
 
 
 </resources>

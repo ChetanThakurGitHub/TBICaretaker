@@ -8,11 +8,10 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -116,7 +115,7 @@ public class EditProfileCaretakerActivity extends AppCompatActivity implements V
 
             case R.id.layout_for_changePassword:
                 DailogView dailogView = new DailogView();
-                dailogView.changePasswordDailog(this, mainLayout);
+                dailogView.changePasswordDailog(this);
                 break;
 
             case R.id.iv_for_backIco:
@@ -207,7 +206,7 @@ public class EditProfileCaretakerActivity extends AppCompatActivity implements V
         String fullName = et_for_fullName.getText().toString().trim();
         String email = et_for_emails.getText().toString().trim();
 
-        if (fullName.isEmpty()) {
+        if (fullName.equalsIgnoreCase("")) {
             Constant.snackbar(mainLayout, getResources().getString(R.string.fullname_v));
             et_for_fullName.requestFocus();
         } else if (fullName.length() < 3) {
@@ -246,7 +245,7 @@ public class EditProfileCaretakerActivity extends AppCompatActivity implements V
                         if (status.equalsIgnoreCase("success")) {
 
                             String updatedRecords = jsonObject.getString("updatedRecords");
-                            UserFullDetail userFullDetail = new Gson().fromJson(updatedRecords.toString(), UserFullDetail.class);
+                            UserFullDetail userFullDetail = new Gson().fromJson(updatedRecords, UserFullDetail.class);
                             userFullDetail.password = session.getPasswordR();
                             session.setEmailR(userFullDetail.email);
                             session.createSession(userFullDetail);
@@ -257,7 +256,7 @@ public class EditProfileCaretakerActivity extends AppCompatActivity implements V
                         }
 
                     } catch (Throwable t) {
-                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                        t.printStackTrace();
                     }
 
                     pDialog.dismiss();
@@ -275,7 +274,7 @@ public class EditProfileCaretakerActivity extends AppCompatActivity implements V
             }) {
                 @Override
                 protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<String, String>();
+                    Map<String, String> params = new HashMap<>();
                     params.put("full_name", fullName);
                     params.put("email", email);
                     params.put("userType", "2");
@@ -284,14 +283,14 @@ public class EditProfileCaretakerActivity extends AppCompatActivity implements V
 
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<String, String>();
+                    Map<String, String> headers = new HashMap<>();
                     headers.put("authToken", session.getAuthToken());
                     return headers;
                 }
 
                 @Override
                 protected Map<String, DataPart> getByteData() {
-                    Map<String, DataPart> params = new HashMap<String, DataPart>();
+                    Map<String, DataPart> params = new HashMap<>();
                     if (profileImageBitmap != null) {
                         params.put("profileImage", new VolleyMultipartRequest.DataPart("profilePic.jpg", AppHelper.getFileDataFromDrawable(profileImageBitmap), "image/jpeg"));
                     }

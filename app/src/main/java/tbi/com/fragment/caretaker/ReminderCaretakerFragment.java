@@ -8,11 +8,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,7 +51,9 @@ public class ReminderCaretakerFragment extends Fragment implements View.OnClickL
     private TextView tv_for_noData, tv_for_tittle;
     private FloatingActionButton floating_btn;
     private RelativeLayout mainLayout;
-    private ImageView iv_for_menu, iv_for_backIco, iv_for_edit, iv_for_more, iv_for_delete, iv_for_calender;
+    private LinearLayout layout_for_addDelete;
+    private ImageView iv_for_menu, iv_for_backIco, iv_for_edit, iv_for_more, iv_for_delete,
+            iv_for_calender, iv_for_deleteChat, iv_for_block;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private int start = 0;
 
@@ -59,21 +61,10 @@ public class ReminderCaretakerFragment extends Fragment implements View.OnClickL
         // Required empty public constructor
     }
 
-    public static ReminderCaretakerFragment newInstance(String param1) {
-        ReminderCaretakerFragment fragment = new ReminderCaretakerFragment();
-        Bundle args = new Bundle();
-        args.putString("param1", param1);
-        fragment.setArguments(args);
-        return fragment;
+    public static ReminderCaretakerFragment newInstance() {
+        return new ReminderCaretakerFragment();
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            String mParam1 = getArguments().getString("param1");
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -102,7 +93,7 @@ public class ReminderCaretakerFragment extends Fragment implements View.OnClickL
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                loadNextDataFromApi(page, totalItemsCount);
+                getAllRemindersListAPI();
             }
         };
         recycler_view.addOnScrollListener(scrollListener);
@@ -118,6 +109,9 @@ public class ReminderCaretakerFragment extends Fragment implements View.OnClickL
         iv_for_backIco.setVisibility(View.GONE);
         iv_for_edit.setVisibility(View.GONE);
         iv_for_more.setVisibility(View.GONE);
+        iv_for_block.setVisibility(View.GONE);
+        iv_for_deleteChat.setVisibility(View.GONE);
+        layout_for_addDelete.setVisibility(View.GONE);
         iv_for_delete.setVisibility(View.GONE);
         iv_for_menu.setVisibility(View.VISIBLE);
         iv_for_calender.setVisibility(View.VISIBLE);
@@ -138,9 +132,6 @@ public class ReminderCaretakerFragment extends Fragment implements View.OnClickL
         caretakerReminderAdapter.notifyDataSetChanged();
     }
 
-    public void loadNextDataFromApi(int page, int totalItemsCount) {
-        getAllRemindersListAPI();
-    } // pagination
 
     private void initView(View view) {
         recycler_view = view.findViewById(R.id.recycler_view);
@@ -156,6 +147,9 @@ public class ReminderCaretakerFragment extends Fragment implements View.OnClickL
         iv_for_more = getActivity().findViewById(R.id.iv_for_more);
         iv_for_delete = getActivity().findViewById(R.id.iv_for_delete);
         iv_for_calender = getActivity().findViewById(R.id.iv_for_calender);
+        iv_for_deleteChat = getActivity().findViewById(R.id.iv_for_deleteChat);
+        iv_for_block = getActivity().findViewById(R.id.iv_for_block);
+        layout_for_addDelete = getActivity().findViewById(R.id.layout_for_addDelete);
         mainLayout.setOnClickListener(this);
     }
 
@@ -195,7 +189,7 @@ public class ReminderCaretakerFragment extends Fragment implements View.OnClickL
                         }
 
                     } catch (Throwable t) {
-                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                        t.printStackTrace();
                     }
                 }
             }, new Response.ErrorListener() {
@@ -211,7 +205,7 @@ public class ReminderCaretakerFragment extends Fragment implements View.OnClickL
 
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<String, String>();
+                    Map<String, String> headers = new HashMap<>();
                     headers.put("authToken", session.getAuthToken());
                     return headers;
                 }

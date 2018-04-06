@@ -3,7 +3,6 @@ package tbi.com.fragment.sufferer;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,20 +42,8 @@ public class MyCaretakerFragment extends Fragment implements View.OnClickListene
         // Required empty public constructor
     }
 
-    public static MyCaretakerFragment newInstance(String param1) {
-        MyCaretakerFragment fragment = new MyCaretakerFragment();
-        Bundle args = new Bundle();
-        args.putString("param1", param1);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            String mParam1 = getArguments().getString("param1");
-        }
+    public static MyCaretakerFragment newInstance() {
+        return new MyCaretakerFragment();
     }
 
     @Override
@@ -101,7 +88,6 @@ public class MyCaretakerFragment extends Fragment implements View.OnClickListene
                 @Override
                 public void onResponse(NetworkResponse response) {
                     String data = new String(response.data);
-                    Log.e("Response", data);
 
                     try {
                         JSONObject jsonObject = new JSONObject(data);
@@ -127,7 +113,7 @@ public class MyCaretakerFragment extends Fragment implements View.OnClickListene
                         }
 
                     } catch (Throwable t) {
-                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                        t.printStackTrace();
                     }
                     pDialog.dismiss();
                 }
@@ -135,7 +121,6 @@ public class MyCaretakerFragment extends Fragment implements View.OnClickListene
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     NetworkResponse networkResponse = error.networkResponse;
-                    Log.i("Error", networkResponse + "");
                     Constant.snackbar(mainLayout, networkResponse + "");
                     pDialog.dismiss();
                     error.printStackTrace();
@@ -144,7 +129,7 @@ public class MyCaretakerFragment extends Fragment implements View.OnClickListene
 
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<String, String>();
+                    Map<String, String> headers = new HashMap<>();
                     headers.put("authToken", session.getAuthToken());
                     return headers;
                 }
@@ -185,7 +170,7 @@ public class MyCaretakerFragment extends Fragment implements View.OnClickListene
                         }
 
                     } catch (Throwable t) {
-                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                        t.printStackTrace();
                     }
                     pDialog.dismiss();
                 }
@@ -201,7 +186,7 @@ public class MyCaretakerFragment extends Fragment implements View.OnClickListene
             }) {
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<String, String>();
+                    Map<String, String> headers = new HashMap<>();
                     headers.put("authToken", session.getAuthToken());
                     return headers;
                 }

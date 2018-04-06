@@ -19,16 +19,15 @@ public class Session {
     private SharedPreferences.Editor editor, editor_r, editor_top;
 
     public Session(Context context) {
-        Context mcontext = context;
-        mypref = mcontext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        mypref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         editor = mypref.edit();
         editor.apply();
 
-        rememberMePref = mcontext.getSharedPreferences(PREF_NAME_R, Context.MODE_PRIVATE);
+        rememberMePref = context.getSharedPreferences(PREF_NAME_R, Context.MODE_PRIVATE);
         editor_r = rememberMePref.edit();
         editor_r.apply();
 
-        top = mcontext.getSharedPreferences(PREF_NAME_TOP, Context.MODE_PRIVATE);
+        top = context.getSharedPreferences(PREF_NAME_TOP, Context.MODE_PRIVATE);
         editor_top = top.edit();
         editor_top.apply();
     }
@@ -66,7 +65,6 @@ public class Session {
         editor_r.putString(Constant.USER_TYPE, userFullDetail.userType);
         editor_r.commit();
     }
-
 
     public String getEmailR() {
         return rememberMePref.getString(Constant.EMAIL, "");

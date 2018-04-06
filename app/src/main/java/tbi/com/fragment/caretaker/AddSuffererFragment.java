@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,20 +43,8 @@ public class AddSuffererFragment extends Fragment implements View.OnClickListene
     public AddSuffererFragment() {
     }
 
-    public static AddSuffererFragment newInstance(String param1) {
-        AddSuffererFragment fragment = new AddSuffererFragment();
-        Bundle args = new Bundle();
-        args.putString("param1", param1);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            String mParam1 = getArguments().getString("param1");
-        }
+    public static AddSuffererFragment newInstance() {
+        return new AddSuffererFragment();
     }
 
     @Override
@@ -114,13 +101,13 @@ public class AddSuffererFragment extends Fragment implements View.OnClickListene
                             Constant.snackbar(mainLayout, message);
                             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                             session.setLogin("1");
-                            ((CaretakerHomeActivity) getActivity()).replaceFragment(ReminderCaretakerFragment.newInstance(""), false, R.id.framlayout);
+                            ((CaretakerHomeActivity) getActivity()).replaceFragment(ReminderCaretakerFragment.newInstance(), false, R.id.framlayout);
                         } else {
                             Constant.snackbar(mainLayout, message);
                         }
 
                     } catch (Throwable t) {
-                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                        t.printStackTrace();
                     }
                     pDialog.dismiss();
                 }
@@ -136,14 +123,14 @@ public class AddSuffererFragment extends Fragment implements View.OnClickListene
             }) {
                 @Override
                 protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<String, String>();
+                    Map<String, String> params = new HashMap<>();
                     params.put("email", email);
                     return params;
                 }
 
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<String, String>();
+                    Map<String, String> headers = new HashMap<>();
                     headers.put("authToken", session.getAuthToken());
                     return headers;
                 }
@@ -165,6 +152,5 @@ public class AddSuffererFragment extends Fragment implements View.OnClickListene
                 break;
         }
     }
-
 
 }

@@ -2,9 +2,6 @@ package tbi.com.helper;
 
 import java.util.List;
 
-/**
- * Created by abc on 16/6/17.
- */
 
 public class MonthDecoratorData {
 

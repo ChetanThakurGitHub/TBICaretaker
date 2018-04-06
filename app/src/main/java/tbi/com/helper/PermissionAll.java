@@ -8,18 +8,13 @@ import android.support.v4.content.ContextCompat;
 
 import tbi.com.util.Constant;
 
-
-/**
- * Created by abc on 25/01/2018.
- */
-
 public class PermissionAll {
 
     public boolean checkCallingPermission(Activity context) {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE)
                 != PackageManager.PERMISSION_GRANTED) {
             // No explanation needed, we can request the permission.
-            ActivityCompat.requestPermissions((Activity) context,
+            ActivityCompat.requestPermissions(context,
                     new String[]{Manifest.permission.CALL_PHONE},
                     Constant.CALLING);
             return false;

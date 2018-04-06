@@ -24,8 +24,10 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import tbi.com.R;
+import tbi.com.activity.NotificationRead;
 import tbi.com.adapter.CaretakerNavigationAdapter;
 import tbi.com.broadcastreceiver.activity.NetworkErrorActivity;
+import tbi.com.chat.fragment.MessageCaretakerFragment;
 import tbi.com.custom_calender.activity.CalanderCaretakerActivity;
 import tbi.com.fragment.caretaker.AddSuffererFragment;
 import tbi.com.fragment.caretaker.FaqsCaretakerFragment;
@@ -36,12 +38,13 @@ import tbi.com.session.Session;
 import tbi.com.util.Constant;
 import tbi.com.util.Utils;
 
-public class CaretakerHomeActivity extends AppCompatActivity implements View.OnClickListener {
+public class CaretakerHomeActivity extends NotificationRead implements View.OnClickListener {
 
     public DrawerLayout drawer;
     public CaretakerNavigationAdapter navigationAdapter;
     public TextView tv_for_tittle;
-    public ImageView iv_for_calender, iv_for_menu, iv_for_backIco, iv_for_edit, iv_for_more, iv_for_delete;
+    public ImageView iv_for_calender, iv_for_menu, iv_for_backIco, iv_for_edit, iv_for_more,
+            iv_for_delete, iv_for_deleteChat, iv_for_block;
     BroadcastReceiver netSwitchReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -79,6 +82,8 @@ public class CaretakerHomeActivity extends AppCompatActivity implements View.OnC
         }
         try {
             notification = getIntent().getStringExtra("NOTIFICATION");
+            String notification_id = getIntent().getStringExtra("notification_id");
+            setNotificationId(notification_id);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -94,7 +99,7 @@ public class CaretakerHomeActivity extends AppCompatActivity implements View.OnC
         recycler_view.setAdapter(navigationAdapter);
 
         if (session.getLogin().equals("0")) {
-            Fragment fragment = AddSuffererFragment.newInstance("");
+            Fragment fragment = AddSuffererFragment.newInstance();
             addFragment(fragment, false, R.id.framlayout);
             tv_for_tittle.setText(R.string.add_sufferer);
             tv_for_tittle.setText(R.string.add_sufferer);
@@ -105,7 +110,7 @@ public class CaretakerHomeActivity extends AppCompatActivity implements View.OnC
             iv_for_more.setVisibility(View.GONE);
             iv_for_delete.setVisibility(View.GONE);
         } else {
-            Fragment fragment = ReminderCaretakerFragment.newInstance("");
+            Fragment fragment = ReminderCaretakerFragment.newInstance();
             addFragment(fragment, false, R.id.framlayout);
             tv_for_tittle.setText(R.string.reminders);
             iv_for_backIco.setVisibility(View.GONE);
@@ -123,7 +128,18 @@ public class CaretakerHomeActivity extends AppCompatActivity implements View.OnC
                 iv_for_edit.setVisibility(View.GONE);
                 iv_for_more.setVisibility(View.GONE);
                 iv_for_delete.setVisibility(View.GONE);
-                replaceFragment(AddSuffererFragment.newInstance(""), true, R.id.framlayout);
+                replaceFragment(AddSuffererFragment.newInstance(), true, R.id.framlayout);
+            } else {
+                tv_for_tittle.setText(R.string.messages);
+                iv_for_calender.setVisibility(View.GONE);
+                iv_for_menu.setVisibility(View.VISIBLE);
+                iv_for_backIco.setVisibility(View.GONE);
+                iv_for_edit.setVisibility(View.GONE);
+                iv_for_more.setVisibility(View.GONE);
+                iv_for_block.setVisibility(View.VISIBLE);
+                iv_for_deleteChat.setVisibility(View.VISIBLE);
+                iv_for_delete.setVisibility(View.GONE);
+                replaceFragment(MessageCaretakerFragment.newInstance(), true, R.id.framlayout);
             }
         }
 
@@ -136,6 +152,8 @@ public class CaretakerHomeActivity extends AppCompatActivity implements View.OnC
         iv_for_edit = findViewById(R.id.iv_for_edit);
         iv_for_more = findViewById(R.id.iv_for_more);
         iv_for_delete = findViewById(R.id.iv_for_delete);
+        iv_for_block = findViewById(R.id.iv_for_block);
+        iv_for_deleteChat = findViewById(R.id.iv_for_deleteChat);
         layout_for_addDelete = findViewById(R.id.layout_for_addDelete);
         findViewById(R.id.iv_for_back).setOnClickListener(this);
         findViewById(R.id.tv_for_logout).setOnClickListener(this);
@@ -197,7 +215,7 @@ public class CaretakerHomeActivity extends AppCompatActivity implements View.OnC
         }
     }
 
-    private ArrayList<NavigationListModel> addItemInList() {
+    private void addItemInList() {
         NavigationListModel drawerItem;
         for (int i = 0; i <= 5; i++) {
             drawerItem = new NavigationListModel();
@@ -235,7 +253,6 @@ public class CaretakerHomeActivity extends AppCompatActivity implements View.OnC
             }
             navigationList.add(drawerItem);
         }
-        return navigationList;
     }
 
     @Override
@@ -310,15 +327,17 @@ public class CaretakerHomeActivity extends AppCompatActivity implements View.OnC
         try {
             registerReceiver(netSwitchReceiver, new IntentFilter(Constant.NETWORK_SWITCH_FILTER));
             if (Constant.NETWORK_CHECK == 1) {
-                addFragment(ReminderCaretakerFragment.newInstance(""), false, R.id.framlayout);
+                addFragment(ReminderCaretakerFragment.newInstance(), false, R.id.framlayout);
                 tv_for_tittle.setText(R.string.reminders);
                 iv_for_backIco.setVisibility(View.GONE);
                 iv_for_edit.setVisibility(View.GONE);
                 iv_for_more.setVisibility(View.GONE);
                 iv_for_delete.setVisibility(View.GONE);
+                iv_for_block.setVisibility(View.GONE);
+                iv_for_deleteChat.setVisibility(View.GONE);
             }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -328,7 +347,7 @@ public class CaretakerHomeActivity extends AppCompatActivity implements View.OnC
         try {
             unregisterReceiver(netSwitchReceiver);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 

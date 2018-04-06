@@ -5,6 +5,16 @@
     android:layout_height="match_parent"
     tools:context="tbi.com.chat.fragment.MessageCaretakerFragment">
 
+    <TextView
+        android:id="@+id/tv_for_noChat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:fontFamily="@font/montserrat_regular"
+        android:text="@string/no_chat_found"
+        android:textColor="@color/lightgray"
+        android:textSize="@dimen/_12ssp" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
@@ -42,7 +52,7 @@
                 android:layout_toRightOf="@+id/iv_for_pickImage"
                 android:background="@null"
                 android:fontFamily="@font/montserrat_regular"
-                android:hint="Write a message...."
+                android:hint="@string/write_a_message"
                 android:maxHeight="@dimen/_150sdp"
                 android:padding="@dimen/_5sdp"
                 android:textColor="@color/darkgray"

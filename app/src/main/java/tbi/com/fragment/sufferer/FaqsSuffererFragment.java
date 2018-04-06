@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +28,6 @@ import java.util.Map;
 
 import tbi.com.R;
 import tbi.com.adapter.SuffererFAQAdapter;
-import tbi.com.fragment.caretaker.FaqsCaretakerFragment;
 import tbi.com.model.FaqList;
 import tbi.com.pagination.EndlessRecyclerViewScrollListener;
 import tbi.com.session.Session;
@@ -52,20 +50,8 @@ public class FaqsSuffererFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static FaqsSuffererFragment newInstance(String param1) {
-        FaqsSuffererFragment fragment = new FaqsSuffererFragment();
-        Bundle args = new Bundle();
-        args.putString("param1", param1);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            String mParam1 = getArguments().getString("param1");
-        }
+    public static FaqsSuffererFragment newInstance() {
+        return new FaqsSuffererFragment();
     }
 
     @Override
@@ -81,7 +67,7 @@ public class FaqsSuffererFragment extends Fragment {
         linearLayoutManager.setStackFromEnd(false);
 
         faqLists = new ArrayList<>();
-        suffererFAQAdapter = new SuffererFAQAdapter(faqLists, getContext());
+        suffererFAQAdapter = new SuffererFAQAdapter(faqLists);
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -103,16 +89,13 @@ public class FaqsSuffererFragment extends Fragment {
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                loadNextDataFromApi(page, totalItemsCount);
+                getAllFAQListAPI();
             }
         };
         recycler_view.addOnScrollListener(scrollListener);
         return view;
     }
 
-    public void loadNextDataFromApi(int page, int totalItemsCount) {
-        getAllFAQListAPI();
-    } // pagination
 
     private void initView(View view) {
         recycler_view = view.findViewById(R.id.recycler_view);
@@ -164,7 +147,7 @@ public class FaqsSuffererFragment extends Fragment {
                         }
 
                     } catch (Throwable t) {
-                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                        t.printStackTrace();
                     }
                 }
             }, new Response.ErrorListener() {
@@ -180,7 +163,7 @@ public class FaqsSuffererFragment extends Fragment {
 
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<String, String>();
+                    Map<String, String> headers = new HashMap<>();
                     headers.put("authToken", session.getAuthToken());
                     return headers;
                 }

@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -33,7 +32,6 @@ public class ForgotPassActivity extends AppCompatActivity implements View.OnClic
 
     private EditText et_for_email;
     private RelativeLayout mainLayout;
-    private Session session;
     private View view_for_mobile;
 
     @Override
@@ -41,7 +39,7 @@ public class ForgotPassActivity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         StatusBarUtil.setTranslucent(this);
         setContentView(R.layout.activity_forgot_pass);
-        session = new Session(this);
+        Session session = new Session(this);
         initView();
 
         if (session.isSoftKey()) {
@@ -107,7 +105,7 @@ public class ForgotPassActivity extends AppCompatActivity implements View.OnClic
                         }
 
                     } catch (Throwable t) {
-                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                        t.printStackTrace();
                     }
                     pDialog.dismiss();
                 }
@@ -122,7 +120,7 @@ public class ForgotPassActivity extends AppCompatActivity implements View.OnClic
             }) {
                 @Override
                 protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<String, String>();
+                    Map<String, String> params = new HashMap<>();
                     params.put("email", email);
                     return params;
                 }

@@ -9,6 +9,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +25,7 @@ import tbi.com.fragment.sufferer.MyProfileSufferFragment;
 import tbi.com.fragment.sufferer.NotificationsSuffererFragment;
 import tbi.com.fragment.sufferer.ReminderSuffererFragment;
 import tbi.com.model.NavigationListModel;
+import tbi.com.session.Session;
 import tbi.com.util.Constant;
 
 
@@ -28,10 +33,12 @@ public class SuffererNavigationAdapter extends RecyclerView.Adapter<SuffererNavi
     public int lastclick = -1;
     private List<NavigationListModel> navigationList;
     private SuffererHomeActivity mContext;
+    private Session session;
 
     public SuffererNavigationAdapter(ArrayList<NavigationListModel> navigationList, SuffererHomeActivity mContext) {
         this.navigationList = navigationList;
         this.mContext = mContext;
+        session = new Session(mContext);
     }
 
     @Override
@@ -65,6 +72,27 @@ public class SuffererNavigationAdapter extends RecyclerView.Adapter<SuffererNavi
             }
         }
 
+        if (position == 2) {
+            FirebaseDatabase.getInstance().getReference().child("massage_count").child(session.getUserID()).child("count").addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.getValue() != null) {
+                        String count = dataSnapshot.getValue().toString();
+                        if (count != null && !count.equals("0")) {
+                            holder.tv_for_messageCount.setVisibility(View.VISIBLE);
+                            holder.tv_for_messageCount.setText(count);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        } else {
+            holder.tv_for_messageCount.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -75,7 +103,7 @@ public class SuffererNavigationAdapter extends RecyclerView.Adapter<SuffererNavi
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private ImageView iv_for_image;
-        private TextView tv_for_nameTittle;
+        private TextView tv_for_nameTittle, tv_for_messageCount;
         private View view_for_click, view_for_line;
         private LinearLayout layout_for_item;
 
@@ -87,6 +115,7 @@ public class SuffererNavigationAdapter extends RecyclerView.Adapter<SuffererNavi
             view_for_click = itemView.findViewById(R.id.view_for_click);
             layout_for_item = itemView.findViewById(R.id.layout_for_item);
             view_for_line = itemView.findViewById(R.id.view_for_line);
+            tv_for_messageCount = itemView.findViewById(R.id.tv_for_messageCount);
             layout_for_item.setOnClickListener(this);
 
         }
@@ -99,7 +128,7 @@ public class SuffererNavigationAdapter extends RecyclerView.Adapter<SuffererNavi
                     if (getAdapterPosition() == 0) {
                         lastclick = getAdapterPosition();
                         notifyDataSetChanged();
-                        ((SuffererHomeActivity) mContext).replaceFragment(ReminderSuffererFragment.newInstance(""), false, R.id.framlayout);
+                        mContext.replaceFragment(ReminderSuffererFragment.newInstance(), false, R.id.framlayout);
                         mContext.drawer.closeDrawers();
                         mContext.tv_for_tittle.setText(R.string.reminders);
                         mContext.iv_for_calender.setVisibility(View.VISIBLE);
@@ -111,7 +140,7 @@ public class SuffererNavigationAdapter extends RecyclerView.Adapter<SuffererNavi
                     } else if (getAdapterPosition() == 1) {
                         lastclick = getAdapterPosition();
                         notifyDataSetChanged();
-                        ((SuffererHomeActivity) mContext).replaceFragment(MyProfileSufferFragment.newInstance(""), true, R.id.framlayout);
+                        mContext.replaceFragment(MyProfileSufferFragment.newInstance(), true, R.id.framlayout);
                         mContext.drawer.closeDrawers();
                         mContext.tv_for_tittle.setText(R.string.my_profile);
                         mContext.iv_for_calender.setVisibility(View.GONE);
@@ -123,7 +152,7 @@ public class SuffererNavigationAdapter extends RecyclerView.Adapter<SuffererNavi
                     } else if (getAdapterPosition() == 2) {
                         lastclick = getAdapterPosition();
                         notifyDataSetChanged();
-                        ((SuffererHomeActivity) mContext).replaceFragment(MessageSuffererFragment.newInstance(""), true, R.id.framlayout);
+                        mContext.replaceFragment(MessageSuffererFragment.newInstance(), true, R.id.framlayout);
                         mContext.drawer.closeDrawers();
                         mContext.tv_for_tittle.setText(R.string.messages);
                         mContext.iv_for_calender.setVisibility(View.GONE);
@@ -131,11 +160,13 @@ public class SuffererNavigationAdapter extends RecyclerView.Adapter<SuffererNavi
                         mContext.iv_for_backIco.setVisibility(View.GONE);
                         mContext.iv_for_edit.setVisibility(View.GONE);
                         mContext.iv_for_more.setVisibility(View.GONE);
+                        mContext.iv_for_block.setVisibility(View.VISIBLE);
+                        mContext.iv_for_deleteChat.setVisibility(View.VISIBLE);
                         mContext.iv_for_delete.setVisibility(View.GONE);
                     } else if (getAdapterPosition() == 3) {
                         lastclick = getAdapterPosition();
                         notifyDataSetChanged();
-                        ((SuffererHomeActivity) mContext).replaceFragment(MyCaretakerFragment.newInstance(""), true, R.id.framlayout);
+                        mContext.replaceFragment(MyCaretakerFragment.newInstance(), true, R.id.framlayout);
                         mContext.drawer.closeDrawers();
                         mContext.tv_for_tittle.setText(R.string.my_caretaker);
                         mContext.iv_for_calender.setVisibility(View.GONE);
@@ -147,7 +178,7 @@ public class SuffererNavigationAdapter extends RecyclerView.Adapter<SuffererNavi
                     } else if (getAdapterPosition() == 4) {
                         lastclick = getAdapterPosition();
                         notifyDataSetChanged();
-                        ((SuffererHomeActivity) mContext).replaceFragment(NotificationsSuffererFragment.newInstance(""), true, R.id.framlayout);
+                        mContext.replaceFragment(NotificationsSuffererFragment.newInstance(), true, R.id.framlayout);
                         mContext.drawer.closeDrawers();
                         mContext.tv_for_tittle.setText(R.string.notifications);
                         mContext.iv_for_calender.setVisibility(View.GONE);
@@ -159,7 +190,7 @@ public class SuffererNavigationAdapter extends RecyclerView.Adapter<SuffererNavi
                     } else if (getAdapterPosition() == 5) {
                         lastclick = getAdapterPosition();
                         notifyDataSetChanged();
-                        ((SuffererHomeActivity) mContext).replaceFragment(FaqsSuffererFragment.newInstance(""), true, R.id.framlayout);
+                        mContext.replaceFragment(FaqsSuffererFragment.newInstance(), true, R.id.framlayout);
                         mContext.drawer.closeDrawers();
                         mContext.tv_for_tittle.setText(R.string.faq_s);
                         mContext.iv_for_calender.setVisibility(View.GONE);
@@ -171,11 +202,6 @@ public class SuffererNavigationAdapter extends RecyclerView.Adapter<SuffererNavi
                     } else if (getAdapterPosition() == 6) {
                         lastclick = getAdapterPosition();
                         notifyDataSetChanged();
-                       /* session.logout(mContext);
-                        Intent intent = new Intent(mContext, LoginActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        intent.putExtra("userType","1");
-                        mContext.startActivity(intent);*/
                         Constant.logout(mContext);
                     }
                     break;

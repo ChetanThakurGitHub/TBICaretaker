@@ -21,7 +21,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,10 +29,11 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import tbi.com.R;
+import tbi.com.activity.NotificationRead;
 import tbi.com.adapter.SuffererNavigationAdapter;
 import tbi.com.broadcastreceiver.activity.NetworkErrorActivity;
+import tbi.com.chat.fragment.MessageSuffererFragment;
 import tbi.com.custom_calender.activity.CalanderSuffererActivity;
-import tbi.com.fragment.caretaker.ReminderCaretakerFragment;
 import tbi.com.fragment.sufferer.FaqsSuffererFragment;
 import tbi.com.fragment.sufferer.MyCaretakerFragment;
 import tbi.com.fragment.sufferer.ReminderSuffererFragment;
@@ -46,20 +46,19 @@ import tbi.com.util.Utils;
 
 import static tbi.com.util.Constant.CALLING;
 
-public class SuffererHomeActivity extends AppCompatActivity implements View.OnClickListener {
+public class SuffererHomeActivity extends NotificationRead implements View.OnClickListener {
 
     public DrawerLayout drawer;
     public TextView tv_for_tittle;
-    public ImageView iv_for_profileImage, iv_for_calender, iv_for_menu, iv_for_backIco, iv_for_edit, iv_for_more, iv_for_delete;
+    public ImageView iv_for_profileImage, iv_for_calender, iv_for_menu, iv_for_backIco, iv_for_edit,
+            iv_for_more, iv_for_delete, iv_for_deleteChat, iv_for_block;
     public SuffererNavigationAdapter navigationAdapter;
     BroadcastReceiver netSwitchReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             boolean isConnectionAvailable = intent.getExtras().getBoolean("is_connected");
             if (!isConnectionAvailable) {
-                if (NetworkErrorActivity.isOptedToOffline()) {
-
-                } else {
+                if (!NetworkErrorActivity.isOptedToOffline()) {
                     Intent intent1 = new Intent(SuffererHomeActivity.this, NetworkErrorActivity.class);
                     startActivity(intent1);
                 }
@@ -90,6 +89,8 @@ public class SuffererHomeActivity extends AppCompatActivity implements View.OnCl
 
         try {
             notification = getIntent().getStringExtra("NOTIFICATION");
+            String notification_id = getIntent().getStringExtra("notification_id");
+            setNotificationId(notification_id);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -103,7 +104,7 @@ public class SuffererHomeActivity extends AppCompatActivity implements View.OnCl
         addItemInList();
         navigationAdapter = new SuffererNavigationAdapter(navigationList, this);
         recycler_view.setAdapter(navigationAdapter);
-        addFragment(ReminderSuffererFragment.newInstance(""), false, R.id.framlayout);
+        addFragment(ReminderSuffererFragment.newInstance(), false, R.id.framlayout);
 
         if (notification != null && !notification.equals("")) {
             if (notification.equals("data")) {
@@ -114,7 +115,7 @@ public class SuffererHomeActivity extends AppCompatActivity implements View.OnCl
                 iv_for_edit.setVisibility(View.GONE);
                 iv_for_more.setVisibility(View.GONE);
                 iv_for_delete.setVisibility(View.GONE);
-                replaceFragment(MyCaretakerFragment.newInstance(""), true, R.id.framlayout);
+                replaceFragment(MyCaretakerFragment.newInstance(), true, R.id.framlayout);
             } else if (notification.equals("faqSufferer")) {
                 tv_for_tittle.setText(R.string.faq_s);
                 iv_for_calender.setVisibility(View.GONE);
@@ -123,7 +124,18 @@ public class SuffererHomeActivity extends AppCompatActivity implements View.OnCl
                 iv_for_edit.setVisibility(View.GONE);
                 iv_for_more.setVisibility(View.GONE);
                 iv_for_delete.setVisibility(View.GONE);
-                replaceFragment(FaqsSuffererFragment.newInstance(""), true, R.id.framlayout);
+                replaceFragment(FaqsSuffererFragment.newInstance(), true, R.id.framlayout);
+            } else if (notification.equals("chat")) {
+                tv_for_tittle.setText(R.string.messages);
+                iv_for_calender.setVisibility(View.GONE);
+                iv_for_menu.setVisibility(View.VISIBLE);
+                iv_for_backIco.setVisibility(View.GONE);
+                iv_for_edit.setVisibility(View.GONE);
+                iv_for_more.setVisibility(View.GONE);
+                iv_for_block.setVisibility(View.VISIBLE);
+                iv_for_deleteChat.setVisibility(View.VISIBLE);
+                iv_for_delete.setVisibility(View.GONE);
+                replaceFragment(MessageSuffererFragment.newInstance(), true, R.id.framlayout);
             }
         }
     }
@@ -146,6 +158,8 @@ public class SuffererHomeActivity extends AppCompatActivity implements View.OnCl
         iv_for_edit = findViewById(R.id.iv_for_edit);
         iv_for_more = findViewById(R.id.iv_for_more);
         iv_for_delete = findViewById(R.id.iv_for_delete);
+        iv_for_block = findViewById(R.id.iv_for_block);
+        iv_for_deleteChat = findViewById(R.id.iv_for_deleteChat);
         findViewById(R.id.layout_for_calling).setOnClickListener(this);
         iv_for_menu.setOnClickListener(this);
         iv_for_calender.setOnClickListener(this);
@@ -196,7 +210,7 @@ public class SuffererHomeActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
-    private ArrayList<NavigationListModel> addItemInList() {
+    private void addItemInList() {
         NavigationListModel drawerItem;
         for (int i = 0; i <= 6; i++) {
             drawerItem = new NavigationListModel();
@@ -239,7 +253,6 @@ public class SuffererHomeActivity extends AppCompatActivity implements View.OnCl
             }
             navigationList.add(drawerItem);
         }
-        return navigationList;
     }
 
     @Override
@@ -331,10 +344,17 @@ public class SuffererHomeActivity extends AppCompatActivity implements View.OnCl
         try {
             registerReceiver(netSwitchReceiver, new IntentFilter(Constant.NETWORK_SWITCH_FILTER));
             if (Constant.NETWORK_CHECK == 1) {
-                addFragment(ReminderSuffererFragment.newInstance(""), false, R.id.framlayout);
+                addFragment(ReminderSuffererFragment.newInstance(), false, R.id.framlayout);
+                tv_for_tittle.setText(R.string.reminders);
+                iv_for_backIco.setVisibility(View.GONE);
+                iv_for_edit.setVisibility(View.GONE);
+                iv_for_more.setVisibility(View.GONE);
+                iv_for_delete.setVisibility(View.GONE);
+                iv_for_block.setVisibility(View.GONE);
+                iv_for_deleteChat.setVisibility(View.GONE);
             }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -344,7 +364,7 @@ public class SuffererHomeActivity extends AppCompatActivity implements View.OnCl
         try {
             unregisterReceiver(netSwitchReceiver);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 

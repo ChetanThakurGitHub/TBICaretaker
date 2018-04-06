@@ -16,14 +16,10 @@ import tbi.com.custom_view.DailogView;
 import tbi.com.fragment.caretaker.FaqsCaretakerFragment;
 import tbi.com.model.FaqList;
 
-/**
- * Created by abc on 12/02/2018.
- */
-
 public class CaretakerFAQAdapter extends RecyclerView.Adapter<CaretakerFAQAdapter.ViewHolder> {
-    public List<FaqList> faqLists;
     public Boolean isShow = false;
     public FaqsCaretakerFragment fragment;
+    private List<FaqList> faqLists;
     private Context mContext;
 
     public CaretakerFAQAdapter(ArrayList<FaqList> faqLists, Context mContext, FaqsCaretakerFragment fragment) {
@@ -45,11 +41,7 @@ public class CaretakerFAQAdapter extends RecyclerView.Adapter<CaretakerFAQAdapte
         holder.tv_for_faqTitle.setText(faqList.title);
         holder.tv_for_descriptionFAQ.setText(faqList.description);
 
-        if (isShow) {
-            holder.iv_for_check.setVisibility(View.VISIBLE);
-        } else {
-            holder.iv_for_check.setVisibility(View.GONE);
-        }
+        holder.iv_for_check.setVisibility(isShow ? View.VISIBLE : View.GONE);
     }
 
     @Override

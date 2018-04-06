@@ -14,14 +14,10 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-/**
- * Created by abc on 12/01/2018.
- */
-
 public class FcmNotificationBuilder {
     public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
     private static final String TAG = "FcmNotificationBuilder";
-    private static final String SERVER_API_KEY = "AAAAG0RQhPQ:APA91bF6hzD66RZKsdhgw1y60j9y2yLvBioa2hSjz9sdGOoEOLBnFQryVSTgaxrCqC4Mz1vCG0bZl4oJlKkwSrtIUDsQcaU019hvrg4IYTlid6D1JOHdswRZcMP3K_tMZ3rIsp1ovTWM";
+    private static final String SERVER_API_KEY = "AAAAQo-UCPo:APA91bH3G27h65xV5jkzBhVy9QaGcPSzORUKUHPHMyt8SRDLle_Lgttnl76sw657G3Q2m05b-RmqmJmOwItgb4gluOgEDdUVpV0VZfHeox-W1n2HDJsRvwrmXcO5_nhnP4xTfOOFpzzd";
     private static final String CONTENT_TYPE = "Content-Type";
     private static final String APPLICATION_JSON = "application/json";
     private static final String AUTHORIZATION = "Authorization";

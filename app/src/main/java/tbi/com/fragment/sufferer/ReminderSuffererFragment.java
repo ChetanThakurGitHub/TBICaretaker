@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +46,7 @@ public class ReminderSuffererFragment extends Fragment {
     private ArrayList<AllReminderList> allReminderLists;
     private TextView tv_for_noData, tv_for_tittle;
     private RelativeLayout mainLayout;
-    private ImageView iv_for_menu, iv_for_backIco, iv_for_edit, iv_for_more, iv_for_delete, iv_for_calender;
+    private ImageView iv_for_menu, iv_for_backIco, iv_for_edit, iv_for_more, iv_for_delete, iv_for_calender, iv_for_deleteChat, iv_for_block;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private int start = 0;
 
@@ -55,21 +54,10 @@ public class ReminderSuffererFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static ReminderSuffererFragment newInstance(String param1) {
-        ReminderSuffererFragment fragment = new ReminderSuffererFragment();
-        Bundle args = new Bundle();
-        args.putString("param1", param1);
-        fragment.setArguments(args);
-        return fragment;
+    public static ReminderSuffererFragment newInstance() {
+        return new ReminderSuffererFragment();
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            String mParam1 = getArguments().getString("param1");
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -98,7 +86,7 @@ public class ReminderSuffererFragment extends Fragment {
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                loadNextDataFromApi(page, totalItemsCount);
+                getAllRemindersListAPI();
             }
         };
         recycler_view.addOnScrollListener(scrollListener);
@@ -114,6 +102,8 @@ public class ReminderSuffererFragment extends Fragment {
         iv_for_more = getActivity().findViewById(R.id.iv_for_more);
         iv_for_delete = getActivity().findViewById(R.id.iv_for_delete);
         iv_for_calender = getActivity().findViewById(R.id.iv_for_calender);
+        iv_for_deleteChat = getActivity().findViewById(R.id.iv_for_deleteChat);
+        iv_for_block = getActivity().findViewById(R.id.iv_for_block);
 
         recycler_view = view.findViewById(R.id.recycler_view);
         tv_for_noData = view.findViewById(R.id.tv_for_noData);
@@ -127,10 +117,6 @@ public class ReminderSuffererFragment extends Fragment {
         });
     }
 
-    public void loadNextDataFromApi(int page, int totalItemsCount) {
-        getAllRemindersListAPI();
-    } // pagination
-
     @Override
     public void onResume() {
         super.onResume();
@@ -140,6 +126,8 @@ public class ReminderSuffererFragment extends Fragment {
         iv_for_edit.setVisibility(View.GONE);
         iv_for_more.setVisibility(View.GONE);
         iv_for_delete.setVisibility(View.GONE);
+        iv_for_block.setVisibility(View.GONE);
+        iv_for_deleteChat.setVisibility(View.GONE);
         iv_for_menu.setVisibility(View.VISIBLE);
         iv_for_calender.setVisibility(View.VISIBLE);
 
@@ -195,7 +183,7 @@ public class ReminderSuffererFragment extends Fragment {
                         }
 
                     } catch (Throwable t) {
-                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                        t.printStackTrace();
                     }
                 }
             }, new Response.ErrorListener() {
@@ -211,7 +199,7 @@ public class ReminderSuffererFragment extends Fragment {
 
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<String, String>();
+                    Map<String, String> headers = new HashMap<>();
                     headers.put("authToken", session.getAuthToken());
                     return headers;
                 }

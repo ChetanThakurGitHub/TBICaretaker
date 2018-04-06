@@ -8,9 +8,6 @@ import android.support.v4.content.ContextCompat;
 
 import java.io.ByteArrayOutputStream;
 
-/**
- * Created by dharmraj on 19/10/16.
- */
 public class AppHelper {
 
     //Turn Resource id into byte array.

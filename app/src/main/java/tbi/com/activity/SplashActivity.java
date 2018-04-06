@@ -107,7 +107,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     public boolean hasSoftKeys(WindowManager windowManager) {
-        boolean hasSoftwareKeys = true;
+        boolean hasSoftwareKeys;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             Display d = windowManager.getDefaultDisplay();

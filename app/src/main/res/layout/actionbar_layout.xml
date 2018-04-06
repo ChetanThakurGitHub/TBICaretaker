@@ -82,4 +82,27 @@
         android:padding="@dimen/_2sdp"
         android:src="@drawable/ic_delete" />
 
+    <ImageView
+        android:id="@+id/iv_for_deleteChat"
+        android:layout_width="@dimen/_25sdp"
+        android:layout_height="@dimen/_25sdp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/_10sdp"
+        android:gravity="center"
+        android:padding="@dimen/_2sdp"
+        android:src="@drawable/ic_delete"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/iv_for_block"
+        android:layout_width="@dimen/_25sdp"
+        android:layout_height="@dimen/_25sdp"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/iv_for_deleteChat"
+        android:gravity="center"
+        android:padding="@dimen/_3sdp"
+        android:src="@drawable/ic_blocked"
+        android:visibility="gone" />-->
+
 </RelativeLayout>

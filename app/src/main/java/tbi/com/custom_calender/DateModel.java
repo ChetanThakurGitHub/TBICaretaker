@@ -2,9 +2,6 @@ package tbi.com.custom_calender;
 
 import java.util.Date;
 
-/**
- * Created by android-5 on 26/5/17.
- */
 
 public class DateModel {
 

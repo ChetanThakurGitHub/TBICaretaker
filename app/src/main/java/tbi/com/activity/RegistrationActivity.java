@@ -271,7 +271,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
             }) {
                 @Override
                 protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<String, String>();
+                    Map<String, String> params = new HashMap<>();
                     params.put("name", fullName);
                     params.put("email", email);
                     params.put("password", password);
@@ -287,7 +287,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
 
                 @Override
                 protected Map<String, DataPart> getByteData() {
-                    Map<String, DataPart> params = new HashMap<String, DataPart>();
+                    Map<String, DataPart> params = new HashMap<>();
                     if (profileImageBitmap != null) {
                         params.put("profileImage", new VolleyMultipartRequest.DataPart("profilePic.jpg", AppHelper.getFileDataFromDrawable(profileImageBitmap), "image/jpeg"));
                     }

@@ -11,7 +11,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -109,7 +108,7 @@ public class DailogView {
                         }
 
                     } catch (Throwable t) {
-                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                        t.printStackTrace();
                     }
                     pDialog.dismiss();
                 }
@@ -124,14 +123,14 @@ public class DailogView {
             }) {
                 @Override
                 protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<String, String>();
+                    Map<String, String> params = new HashMap<>();
                     params.put("reminderId", reminderId);
                     return params;
                 }
 
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<String, String>();
+                    Map<String, String> headers = new HashMap<>();
                     Session session = new Session(context);
                     headers.put("authToken", session.getAuthToken());
                     return headers;
@@ -146,7 +145,7 @@ public class DailogView {
         }
     }
 
-    public void changePasswordDailog(final Context context, final RelativeLayout mainLayout) {
+    public void changePasswordDailog(final Context context) {
         final Session session = new Session(context);
         final Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -174,7 +173,6 @@ public class DailogView {
             public void onClick(View v) {
                 String oldPassword = ed_for_oldPass.getText().toString().trim();
                 String newPassword = ed_for_newPass.getText().toString().trim();
-                String pa = session.getPassword();
                 if (oldPassword.equalsIgnoreCase("")) {
                     Constant.snackbar(ed_for_newPass, context.getResources().getString(R.string.password_v));
                     ed_for_oldPass.requestFocus();
@@ -203,7 +201,7 @@ public class DailogView {
             @Override
             public void onClick(View v) {
 
-                if (is_show == true) {
+                if (is_show) {
                     ed_for_newPass.setTransformationMethod(null);
                     iv_for_showPass.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_eye));
                     is_show = false;
@@ -218,7 +216,7 @@ public class DailogView {
         dialog.show();
     }
 
-    public void showAlertDialog(final Context context, final EditText ed_for_newPass, final String oldPassword, final String newPassword, final Session session) {
+    private void showAlertDialog(final Context context, final EditText ed_for_newPass, final String oldPassword, final String newPassword, final Session session) {
 
         AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
         builder1.setTitle("Alert!");
@@ -264,7 +262,7 @@ public class DailogView {
                         }
 
                     } catch (Throwable t) {
-                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                        t.printStackTrace();
                     }
                     pDialog.dismiss();
                 }
@@ -279,7 +277,7 @@ public class DailogView {
             }) {
                 @Override
                 protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<String, String>();
+                    Map<String, String> params = new HashMap<>();
                     params.put("oldPassword", oldPassword);
                     params.put("newPassword", newPassword);
                     return params;
@@ -287,7 +285,7 @@ public class DailogView {
 
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<String, String>();
+                    Map<String, String> headers = new HashMap<>();
                     Session session = new Session(context);
                     headers.put("authToken", session.getAuthToken());
                     return headers;
@@ -309,7 +307,7 @@ public class DailogView {
         dialog.setCancelable(false);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-        et_for_bloodGroup.setText("A-positive");
+        et_for_bloodGroup.setText(R.string.a);
 
         ImageView layout_for_crossDailog = dialog.findViewById(R.id.layout_for_crossDailog);
         Button btn_for_yes = dialog.findViewById(R.id.btn_for_yes);
@@ -469,7 +467,7 @@ public class DailogView {
                         }
 
                     } catch (Throwable t) {
-                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                        t.printStackTrace();
                     }
                     pDialog.dismiss();
                 }
@@ -484,14 +482,14 @@ public class DailogView {
             }) {
                 @Override
                 protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<String, String>();
+                    Map<String, String> params = new HashMap<>();
                     params.put("reminderId", allReminderList.reminderId);
                     return params;
                 }
 
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<String, String>();
+                    Map<String, String> headers = new HashMap<>();
                     Session session = new Session(context);
                     headers.put("authToken", session.getAuthToken());
                     return headers;
@@ -605,7 +603,7 @@ public class DailogView {
                         }
 
                     } catch (Throwable t) {
-                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                        t.printStackTrace();
                     }
                     pDialog.dismiss();
                 }
@@ -620,7 +618,7 @@ public class DailogView {
             }) {
                 @Override
                 protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<String, String>();
+                    Map<String, String> params = new HashMap<>();
                     params.put("title", title);
                     params.put("description", description);
                     return params;
@@ -628,7 +626,7 @@ public class DailogView {
 
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<String, String>();
+                    Map<String, String> headers = new HashMap<>();
                     Session session = new Session(context);
                     headers.put("authToken", session.getAuthToken());
                     return headers;
@@ -697,7 +695,7 @@ public class DailogView {
                         }
 
                     } catch (Throwable t) {
-                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                        t.printStackTrace();
                     }
                     pDialog.dismiss();
                 }
@@ -712,7 +710,7 @@ public class DailogView {
             }) {
                 @Override
                 protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<String, String>();
+                    Map<String, String> params = new HashMap<>();
                     ArrayList<FaqList> faqLists = faqsCaretakerFragment.faqLists;
                     ArrayList<String> arrayList = new ArrayList<>();
                     for (int i = 0; i < faqLists.size(); i++) {
@@ -726,7 +724,7 @@ public class DailogView {
 
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<String, String>();
+                    Map<String, String> headers = new HashMap<>();
                     Session session = new Session(context);
                     headers.put("authToken", session.getAuthToken());
                     return headers;
@@ -846,7 +844,7 @@ public class DailogView {
                         }
 
                     } catch (Throwable t) {
-                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                        t.printStackTrace();
                     }
                     pDialog.dismiss();
                 }
@@ -861,7 +859,7 @@ public class DailogView {
             }) {
                 @Override
                 protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<String, String>();
+                    Map<String, String> params = new HashMap<>();
                     params.put("title", title);
                     params.put("description", description);
                     params.put("faqId", faqList.faqId);
@@ -870,7 +868,7 @@ public class DailogView {
 
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<String, String>();
+                    Map<String, String> headers = new HashMap<>();
                     Session session = new Session(context);
                     headers.put("authToken", session.getAuthToken());
                     return headers;

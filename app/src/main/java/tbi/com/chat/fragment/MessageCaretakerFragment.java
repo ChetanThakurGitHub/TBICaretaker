@@ -5,17 +5,15 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -44,6 +42,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -57,9 +56,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -67,8 +64,10 @@ import tbi.com.R;
 import tbi.com.chat.adapter.ChatAdapter;
 import tbi.com.chat.model.BlockUsers;
 import tbi.com.chat.model.Chatting;
+import tbi.com.chat.model.MessageCount;
 import tbi.com.fcm.FcmNotificationBuilder;
 import tbi.com.helper.ImageRotator;
+import tbi.com.helper.SendImageOnFirebase;
 import tbi.com.model.MySuffererList;
 import tbi.com.session.Session;
 import tbi.com.util.Constant;
@@ -76,120 +75,34 @@ import tbi.com.util.Utils;
 import tbi.com.vollyemultipart.VolleyMultipartRequest;
 import tbi.com.vollyemultipart.VolleySingleton;
 
-import static tbi.com.helper.ImagePicker.decodeBitmap;
-
-
 public class MessageCaretakerFragment extends Fragment implements View.OnClickListener {
-    //private static final String TAG = .class.getSimpleName();
-    public static final int PICK_IMAGE_REQUEST_CODE = 234; // the number doesn't matter
-    private static final String ARG_PARAM1 = "param1";
-    private static final int RESULT_OK = -1;
-    private static final String TEMP_IMAGE_NAME = "tempImage.jpg";
-    private static final int DEFAULT_MIN_WIDTH_QUALITY = 400;        // min pixels
-    private static final int DEFAULT_MIN_HEIGHT_QUALITY = 400;
-    private static int minWidthQuality = DEFAULT_MIN_WIDTH_QUALITY;
-    private static int minHeightQuality = DEFAULT_MIN_HEIGHT_QUALITY;
-    private String mParam1;
-    private ImageView iv_for_send, iv_for_pickImage, iv_for_image, iv_for_delete, iv_for_block;
+
+    private ImageView iv_for_send, iv_for_pickImage, iv_for_deleteChat, iv_for_block;
     private EditText et_for_sendTxt;
     private TextView tv_for_noChat;
     private RecyclerView recycler_view;
     private Session session;
     private ArrayList<Chatting> chattings;
     private ChatAdapter chatAdapter;
-    private String fullname, uID, chatNode, profileImage, OtherFirebaseToken, blockBy = "", noticiationStaus;
-    private DatabaseReference chatRef;
+    private String fullname, uID, chatNode, OtherFirebaseToken, blockBy = "";
+    private DatabaseReference chatRef, databaseReference, msgCountRef, msgCountRefMy;
     private Uri imageUri, photoURI;
-    private DatabaseReference databaseReference;
     private FirebaseStorage storage;
     private ArrayList<String> keys;
-    private int notification = 0;
     private boolean isCamera;
+    private CoordinatorLayout coordinateLay;
 
     public MessageCaretakerFragment() {
         // Required empty public constructor
     }
 
-    public static MessageCaretakerFragment newInstance(String param1) {
-        MessageCaretakerFragment fragment = new MessageCaretakerFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-
- /*   @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        if (notification != 1) {
-            finish();
-        } else {
-            if (session.getUserType().equals("1")) {
-                Intent intent = new Intent(ChatActivity.this, FreelancerActivity.class);
-                startActivity(intent);
-            } else {
-                Intent intent = new Intent(ChatActivity.this, UserMainActivity.class);
-                startActivity(intent);
-            }
-        }
-        MyFirebaseMessagingService.CHAT_HISTORY = "";
-    }*/
-
-    private static boolean hasCameraAccess(Context context) {
-        return ContextCompat.checkSelfPermission(context,
-                Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private static boolean appManifestContainsPermission(Context context, String permission) {
-        PackageManager pm = context.getPackageManager();
-        try {
-            PackageInfo packageInfo = pm.getPackageInfo(context.getPackageName(), PackageManager.GET_PERMISSIONS);
-            String[] requestedPermissions = null;
-            if (packageInfo != null) {
-                requestedPermissions = packageInfo.requestedPermissions;
-            }
-            if (requestedPermissions == null) {
-                return false;
-            }
-
-            if (requestedPermissions.length > 0) {
-                List<String> requestedPermissionsList = Arrays.asList(requestedPermissions);
-                return requestedPermissionsList.contains(permission);
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    private static File getTemporalFile(Context context) {
-        return new File(context.getExternalCacheDir(), TEMP_IMAGE_NAME);
-    }
-
-    /**
-     * Resize to avoid using too much memory loading big images (e.g.: 2560*1920)
-     **/
-    public static Bitmap getImageResized(Context context, Uri selectedImage) {
-        Bitmap bm;
-        int[] sampleSizes = new int[]{5, 3, 2, 1};
-        int i = 0;
-        do {
-            bm = decodeBitmap(context, selectedImage, sampleSizes[i]);
-            i++;
-        } while (bm != null
-                && (bm.getWidth() < minWidthQuality || bm.getHeight() < minHeightQuality)
-                && i < sampleSizes.length);
-        //Log.i(TAG, "Final bitmap width = " + (bm != null ? bm.getWidth() : "No final bitmap"));
-        return bm;
+    public static MessageCaretakerFragment newInstance() {
+        return new MessageCaretakerFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-        }
     }
 
     @Override
@@ -197,82 +110,27 @@ public class MessageCaretakerFragment extends Fragment implements View.OnClickLi
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_message_caretaker, container, false);
 
-        //MyFirebaseMessagingService.CHAT_HISTORY = "1";
         storage = FirebaseStorage.getInstance();
         keys = new ArrayList<>();
         session = new Session(getContext());
 
-        /*uID = getIntent().getStringExtra("USER_ID");
-        fullname = getIntent().getStringExtra("FULLNAME");
-        profileImage = getIntent().getStringExtra("PROFILE_PIC");*/
-
-       /* notification = 0;
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            if (bundle.getString("uid") != null) {
-                notification = 1;
-                uID = bundle.getString("uid");
-                fullname = bundle.getString("title");
-                profileImage = bundle.getString("profilepic");
-            }
-        }*/
-        mySuffererAPI();
-
-
         initView(view);
+        mySuffererAPI();
 
         iv_for_send.setOnClickListener(this);
         iv_for_pickImage.setOnClickListener(this);
-        /*iv_for_delete.setOnClickListener(this);
-        iv_for_block.setOnClickListener(this);*/
+        iv_for_deleteChat.setOnClickListener(this);
+        iv_for_block.setOnClickListener(this);
 
-        chattings = new ArrayList<Chatting>();
+        chattings = new ArrayList<>();
         chatAdapter = new ChatAdapter(chattings, getContext());
         recycler_view.setAdapter(chatAdapter);
 
-        /*getBlockList();
-        getMessageList();*/
-
-        /*if (imageUri == null) {
-            iv_for_image.setVisibility(View.GONE);
-            et_for_sendTxt.setVisibility(View.VISIBLE);
+        if (keys.size() < 0) {
+            iv_for_deleteChat.setClickable(true);
         } else {
-            iv_for_image.setVisibility(View.VISIBLE);
-            et_for_sendTxt.setVisibility(View.GONE);
-        }*/
-
-        /*if (keys.size() < 0) {
-            iv_for_delete.setClickable(true);
-        } else {
-            iv_for_delete.setClickable(false);
-        }*/
-
-     /*   FirebaseDatabase.getInstance().getReference().child("users").child(uID).child("firebaseToken").addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue() != null) {
-                    OtherFirebaseToken = dataSnapshot.getValue().toString();
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        FirebaseDatabase.getInstance().getReference().child("users").child(uID).child("notificationStatus").addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (
-                        dataSnapshot.getValue() != null) {
-                    noticiationStaus = dataSnapshot.getValue().toString();
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
+            iv_for_deleteChat.setClickable(false);
+        }
 
         return view;
     }
@@ -284,21 +142,19 @@ public class MessageCaretakerFragment extends Fragment implements View.OnClickLi
 
     private void getMessageList(final Dialog pDialog) {
         chattings.clear();
+
         chatRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Chatting messageOutput = dataSnapshot.getValue(Chatting.class);
-                Log.e("Chatting", "User: " + messageOutput.uid + " message: " + messageOutput.message);
-
                 pDialog.dismiss();
-                chattings.add(messageOutput);
 
-               /* if (messageOutput.deleteby.equals("") || messageOutput.deleteby.equals(uID)) {
+                if (messageOutput.deleteby.equals("") || messageOutput.deleteby.equals(uID)) {
                     chattings.add(messageOutput);
-                    //tv_for_noChat.setVisibility(View.GONE);
+                    tv_for_noChat.setVisibility(View.GONE);
                     keys.add(dataSnapshot.getKey());
-                   // iv_for_delete.setClickable(true);
-                }*/
+                    iv_for_deleteChat.setClickable(true);
+                }
                 recycler_view.scrollToPosition(chattings.size() - 1);
                 chatAdapter.notifyDataSetChanged();
             }
@@ -306,7 +162,7 @@ public class MessageCaretakerFragment extends Fragment implements View.OnClickLi
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 recycler_view.scrollToPosition(chattings.size() - 1);
-                // keys.add(dataSnapshot.getKey());
+                keys.add(dataSnapshot.getKey());
             }
 
             @Override
@@ -334,36 +190,42 @@ public class MessageCaretakerFragment extends Fragment implements View.OnClickLi
         et_for_sendTxt = view.findViewById(R.id.et_for_sendTxt);
         recycler_view = view.findViewById(R.id.recycler_view);
         iv_for_pickImage = view.findViewById(R.id.iv_for_pickImage);
+        tv_for_noChat = view.findViewById(R.id.tv_for_noChat);
+
+        iv_for_block = getActivity().getWindow().getDecorView().findViewById(R.id.iv_for_block);
+        iv_for_deleteChat = getActivity().getWindow().getDecorView().findViewById(R.id.iv_for_deleteChat);
+        coordinateLay = getActivity().getWindow().getDecorView().findViewById(R.id.coordinateLay);
     }
 
     private void writeToDBProfiles(Chatting chatModel) {
 
         chatRef.push().setValue(chatModel);
-
-        /*if (noticiationStaus != null && !noticiationStaus.equals("")) {
-            if (noticiationStaus.equals("1")) {
-                String fToken = FirebaseInstanceId.getInstance().getToken();
-                String message;
-                if (chatModel.message.contains("firebasestorage.googleapis.com/v0/b/getu")) {
-                    message = "Image";
-                } else {
-                    message = chatModel.message;
-                }
-                sendPushNotificationToReceiver(session.getFullName(), message, session.getUserID(), fToken, OtherFirebaseToken);
-            }
-        }*/
+        String message;
+        if (chatModel.message.contains("tbicaretaker-e76f6.appspot.com")) {
+            message = "Image";
+        } else {
+            message = chatModel.message;
+        }
+        sendPushNotificationToReceiver(message, session.getUserID(), OtherFirebaseToken);
     }
 
     private void userImageClick() {
         final Dialog dialog = new Dialog(getContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.take_picture);
+        dialog.setContentView(R.layout.dailog_take_image);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
         LinearLayout layout_for_camera = dialog.findViewById(R.id.layout_for_camera);
         LinearLayout layout_for_gallery = dialog.findViewById(R.id.layout_for_gallery);
+        ImageView layout_for_crossDailog = dialog.findViewById(R.id.layout_for_crossDailog);
         EnableRuntimePermission();
 
+        layout_for_crossDailog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
         layout_for_camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -382,22 +244,18 @@ public class MessageCaretakerFragment extends Fragment implements View.OnClickLi
         dialog.show();
     }
 
-    /*Dharmraj acharya */
     private void picImage(Dialog dialog) {
-        if (!appManifestContainsPermission(getContext(), Manifest.permission.CAMERA) || hasCameraAccess(getContext())) {
+        if (!SendImageOnFirebase.appManifestContainsPermission(getContext(), Manifest.permission.CAMERA) || SendImageOnFirebase.hasCameraAccess(getContext())) {
             Intent takePhotoIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             takePhotoIntent.putExtra("return-data", true);
             Uri uri = FileProvider.getUriForFile(getContext(), getActivity().getApplicationContext().getPackageName()
-                    + ".fileprovider", getTemporalFile(getContext()));
+                    + ".fileprovider", SendImageOnFirebase.getTemporalFile(getContext()));
             takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-            // takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getTemporalFile(context)));
-            startActivityForResult(takePhotoIntent, 7);
+            getActivity().startActivityForResult(takePhotoIntent, Constant.CAMERA);
             isCamera = true;
             dialog.dismiss();
         }
     }
-
-//Uri code
 
     public void EnableRuntimePermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
@@ -412,38 +270,38 @@ public class MessageCaretakerFragment extends Fragment implements View.OnClickLi
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == Constant.GALLERY && resultCode == RESULT_OK && null != data) {
+        if (requestCode == Constant.GALLERY && resultCode == Constant.RESULT_OK && null != data) {
             imageUri = data.getData();
-        } else {
-            if (requestCode == 7 && resultCode == RESULT_OK) {
+            if (imageUri != null) {
+                uploadImage();
+            }
+        } else if (requestCode == Constant.CAMERA && resultCode == Constant.RESULT_OK) {
 
-                Bitmap bm = null;
-                File imageFile = getTemporalFile(getContext());
-                photoURI = Uri.fromFile(imageFile);
+            Bitmap bm;
+            File imageFile = SendImageOnFirebase.getTemporalFile(getContext());
+            photoURI = Uri.fromFile(imageFile);
 
-                bm = getImageResized(getContext(), photoURI);
-                int rotation = ImageRotator.getRotation(getContext(), photoURI, isCamera);
-                bm = ImageRotator.rotate(bm, rotation);
+            bm = SendImageOnFirebase.getImageResized(getContext(), photoURI);
+            int rotation = ImageRotator.getRotation(getContext(), photoURI, isCamera);
+            bm = ImageRotator.rotate(bm, rotation);
 
+            File file = new File(getActivity().getExternalCacheDir(), UUID.randomUUID() + ".jpg");
+            imageUri = FileProvider.getUriForFile(getContext(), getContext().getApplicationContext().getPackageName()
+                    + ".fileprovider", file);
 
-                File file = new File(getActivity().getExternalCacheDir(), UUID.randomUUID() + ".jpg");
-                imageUri = FileProvider.getUriForFile(getContext(), getContext().getApplicationContext().getPackageName()
-                        + ".fileprovider", file);
-
-
-                if (file != null) {
-                    try {
-                        OutputStream outStream = null;
-                        outStream = new FileOutputStream(file);
-                        bm.compress(Bitmap.CompressFormat.PNG, 80, outStream);
-                        outStream.flush();
-                        outStream.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            if (file != null) {
+                try {
+                    OutputStream outStream;
+                    outStream = new FileOutputStream(file);
+                    bm.compress(Bitmap.CompressFormat.PNG, 80, outStream);
+                    outStream.flush();
+                    outStream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-
+            }
+            if (imageUri != null) {
+                uploadImage();
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -453,7 +311,7 @@ public class MessageCaretakerFragment extends Fragment implements View.OnClickLi
 
         if (imageUri != null) {
             final ProgressDialog progressDialog = new ProgressDialog(getContext());
-            progressDialog.setTitle("Uploading...");
+            progressDialog.setTitle(getString(R.string.upload));
             progressDialog.show();
 
             StorageReference storageReference = storage.getReference();
@@ -466,7 +324,6 @@ public class MessageCaretakerFragment extends Fragment implements View.OnClickLi
                             progressDialog.dismiss();
 
                             Uri fireBaseUri = taskSnapshot.getDownloadUrl();
-                            //Toast.makeText(ChatActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
 
                             Chatting chatModel = new Chatting();
                             chatModel.message = fireBaseUri.toString();
@@ -476,8 +333,7 @@ public class MessageCaretakerFragment extends Fragment implements View.OnClickLi
                             chatModel.name = session.getFullName();
                             chatModel.deleteby = "";
 
-
-                            //writeToDBProfiles(chatModel, chatModel2, session.getUserID());
+                            writeToDBProfiles(chatModel);
 
 
                             imageUri = null;
@@ -503,49 +359,49 @@ public class MessageCaretakerFragment extends Fragment implements View.OnClickLi
         }
     }
 
-    private void sendPushNotificationToReceiver(String name, String message, String userID, String token, String otherFirebaseToken) {
-        FcmNotificationBuilder.initialize().title(name)
-                .message(message).clickaction("ChatActivity")
-                .firebaseToken(token)
+    private void sendPushNotificationToReceiver(String message, String userID, String otherFirebaseToken) {
+        FcmNotificationBuilder.initialize().title(session.getFullName())
+                .message(message).clickaction("ChatActivity").username(session.getFullName())
                 .receiverFirebaseToken(otherFirebaseToken)
-                .uid(userID).profilePic(profileImage).chatNode(chatNode)
-                .send();
+                .uid(userID).send();
     }
 
     private void blockUserDialog() {
         final Dialog dialog = new Dialog(getContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
-        dialog.setContentView(R.layout.dialog_chatblock);
+        dialog.setContentView(R.layout.dailog_delete_layout);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-        Button btn_for_ok = dialog.findViewById(R.id.btn_for_ok);
-        ImageView iv_for_cansel = dialog.findViewById(R.id.iv_for_cansel);
-        final TextView tv_for_text = dialog.findViewById(R.id.tv_for_text);
+        Button btn_for_yes = dialog.findViewById(R.id.btn_for_yes);
+        ImageView layout_for_crossDailog = dialog.findViewById(R.id.layout_for_crossDailog);
+        final TextView tv_for_txt = dialog.findViewById(R.id.tv_for_txt);
+        TextView title = dialog.findViewById(R.id.title);
+        title.setText(R.string.block);
 
         final BlockUsers blockUsers = new BlockUsers();
         if (blockBy.equals("")) {
             blockUsers.blockedBy = session.getUserID();
-            tv_for_text.setText("Do you want to block this user");
+            tv_for_txt.setText(R.string.block_user);
         } else if (blockBy.equals("Both")) {
             blockUsers.blockedBy = uID;
-            tv_for_text.setText("Do you want to unblock this user");
+            tv_for_txt.setText(R.string.unblock_user);
         } else if (blockBy.equals(session.getUserID())) {
             blockUsers.blockedBy = "";
-            tv_for_text.setText("Do you want to unblock this user");
+            tv_for_txt.setText(R.string.unblock_user);
         } else if (blockBy.equals(uID)) {
             blockUsers.blockedBy = "Both";
-            tv_for_text.setText("Do you want to block this user");
+            tv_for_txt.setText(R.string.block_user);
         }
 
-        iv_for_cansel.setOnClickListener(new View.OnClickListener() {
+        layout_for_crossDailog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
             }
         });
 
-        btn_for_ok.setOnClickListener(new View.OnClickListener() {
+        btn_for_yes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 databaseReference.setValue(blockUsers);
@@ -559,26 +415,29 @@ public class MessageCaretakerFragment extends Fragment implements View.OnClickLi
         final Dialog dialog = new Dialog(getContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
-        dialog.setContentView(R.layout.dialog_chatblock);
+        dialog.setContentView(R.layout.dailog_delete_layout);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-        Button btn_for_ok = dialog.findViewById(R.id.btn_for_ok);
-        ImageView iv_for_cansel = dialog.findViewById(R.id.iv_for_cansel);
-        TextView tv_for_text = dialog.findViewById(R.id.tv_for_text);
-        tv_for_text.setText("Do you want to delete chat");
+        Button btn_for_yes = dialog.findViewById(R.id.btn_for_yes);
+        ImageView layout_for_crossDailog = dialog.findViewById(R.id.layout_for_crossDailog);
+        final TextView tv_for_txt = dialog.findViewById(R.id.tv_for_txt);
+        tv_for_txt.setText(R.string.delete_chat);
 
-        iv_for_cansel.setOnClickListener(new View.OnClickListener() {
+        layout_for_crossDailog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
             }
         });
 
-        btn_for_ok.setOnClickListener(new View.OnClickListener() {
+        btn_for_yes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                deteleMsg();
+                try {
+                    deteleMsg();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 dialog.dismiss();
             }
         });
@@ -586,8 +445,7 @@ public class MessageCaretakerFragment extends Fragment implements View.OnClickLi
         dialog.show();
     }
 
-    void deteleMsg() {
-
+    private void deteleMsg() {
         if (keys != null && keys.size() != 0) {
             for (int i = 0; i < keys.size(); i++) {
                 if (!chattings.get(i).deleteby.equals(session.getUserID())) {
@@ -596,16 +454,13 @@ public class MessageCaretakerFragment extends Fragment implements View.OnClickLi
                     } else {
                         chatRef.child(keys.get(i)).child("deleteby").setValue("Both");
                     }
-                    iv_for_delete.setClickable(false);
+                    iv_for_deleteChat.setClickable(false);
                 }
             }
             keys.clear();
         }
-        FirebaseDatabase.getInstance().getReference().child("history").child(session.getUserID()).child(uID).child("deleteby").setValue(session.getUserID());
-
         chattings.clear();
         chatAdapter.notifyDataSetChanged();
-
     }
 
     private void getBlockList() {
@@ -616,13 +471,13 @@ public class MessageCaretakerFragment extends Fragment implements View.OnClickLi
                 blockBy = dataSnapshot.getValue(String.class);
 
                 if (blockBy.equals("")) {
-                    iv_for_block.setImageResource(R.drawable.ic_block_white);
+                    iv_for_block.setImageResource(R.drawable.ic_blocked);
                 } else if (blockBy.equals(session.getUserID())) {
-                    iv_for_block.setImageResource(R.drawable.ic_block_red);
+                    iv_for_block.setImageResource(R.drawable.ic_blocked_red);
                 } else if (blockBy.equals("Both")) {
-                    iv_for_block.setImageResource(R.drawable.ic_block_red);
+                    iv_for_block.setImageResource(R.drawable.ic_blocked_red);
                 } else if (blockBy.equals(uID)) {
-                    iv_for_block.setImageResource(R.drawable.ic_block_white);
+                    iv_for_block.setImageResource(R.drawable.ic_blocked);
                 }
             }
 
@@ -631,13 +486,13 @@ public class MessageCaretakerFragment extends Fragment implements View.OnClickLi
                 blockBy = dataSnapshot.getValue(String.class);
 
                 if (blockBy.equals("")) {
-                    iv_for_block.setImageResource(R.drawable.ic_block_white);
+                    iv_for_block.setImageResource(R.drawable.ic_blocked);
                 } else if (blockBy.equals(session.getUserID())) {
-                    iv_for_block.setImageResource(R.drawable.ic_block_red);
+                    iv_for_block.setImageResource(R.drawable.ic_blocked_red);
                 } else if (blockBy.equals("Both")) {
-                    iv_for_block.setImageResource(R.drawable.ic_block_red);
+                    iv_for_block.setImageResource(R.drawable.ic_blocked_red);
                 } else if (blockBy.equals(uID)) {
-                    iv_for_block.setImageResource(R.drawable.ic_block_white);
+                    iv_for_block.setImageResource(R.drawable.ic_blocked);
                 }
             }
 
@@ -655,52 +510,60 @@ public class MessageCaretakerFragment extends Fragment implements View.OnClickLi
         });
     }
 
+    private void messageCount() {
+        msgCountRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                MessageCount messageCount = dataSnapshot.getValue(MessageCount.class);
+                try {
+                    if (messageCount == null) messageCount = new MessageCount().setValue(0);
+                    int value = (Integer.parseInt(messageCount.count) + 1);
+                    msgCountRef.setValue(messageCount.setValue(value));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                try {
+                    msgCountRefMy.setValue(new MessageCount().setValue(0));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
 
             case R.id.iv_for_send:
-                if (imageUri != null) {
-                    uploadImage();
+                String txt = et_for_sendTxt.getText().toString().trim();
+                if (!txt.equals("")) {
 
-                   /* if (blockBy.equals("")) {
-                        uploadImage();
-                        imageUri = null;
-                        photoURI = null;
+                    Chatting chatModel = new Chatting();
+                    chatModel.message = txt;
+                    chatModel.timeStamp = ServerValue.TIMESTAMP;
+                    chatModel.uid = session.getUserID();
+                    chatModel.firebaseToken = FirebaseInstanceId.getInstance().getToken();
+                    chatModel.name = session.getFullName();
+                    chatModel.deleteby = "";
+
+                    if (blockBy.equals("")) {
+                        messageCount();
+                        writeToDBProfiles(chatModel);
+                        et_for_sendTxt.setText("");
                     } else if (blockBy.equals(session.getUserID())) {
-                        Toast.makeText(getContext(), "You blocked " + fullname + ". " + "Can't send any message", Toast.LENGTH_SHORT).show();
+                        Constant.snackbarTop(coordinateLay, "You blocked " + fullname + ". " + "Can't send any message.");
                     } else if (!blockBy.equals("")) {
-                        Toast.makeText(getContext(), "You are blocked by " + fullname + ". " + "Can't send any message.", Toast.LENGTH_SHORT).show();
-                    }*/
+                        Constant.snackbarTop(coordinateLay, "You are blocked by " + session.getFullName() + ". " + "Can't send any message.");
+                    }
 
                 } else {
-                    String txt = et_for_sendTxt.getText().toString().trim();
-                    if (!txt.equals("")) {
-
-                        Chatting chatModel = new Chatting();
-                        chatModel.message = txt;
-                        chatModel.timeStamp = ServerValue.TIMESTAMP;
-                        chatModel.uid = session.getUserID();
-                        chatModel.firebaseToken = FirebaseInstanceId.getInstance().getToken();
-                        chatModel.name = session.getFullName();
-                        chatModel.deleteby = "";
-
-                        writeToDBProfiles(chatModel);
-
-                        et_for_sendTxt.setText("");
-
-                       /* if (blockBy.equals("")) {
-                            //writeToDBProfiles(chatModel, chatModel2, session.getUserID());
-                            et_for_sendTxt.setText("");
-                        } else if (blockBy.equals(session.getUserID())) {
-                            Toast.makeText(getContext(), "You blocked " + fullname + ". " + "Can't send any message", Toast.LENGTH_SHORT).show();
-                        } else if (!blockBy.equals("")) {
-                            Toast.makeText(getContext(), "You are blocked by " + session.getFullName() + ". " + "Can't send any message.", Toast.LENGTH_SHORT).show();
-                        }*/
-
-                    } else {
-                        Toast.makeText(getContext(), "Please enter text", Toast.LENGTH_SHORT).show();
-                    }
+                    Constant.snackbarTop(coordinateLay, getResources().getString(R.string.enter_text));
                 }
                 break;
             case R.id.iv_for_pickImage:
@@ -709,17 +572,17 @@ public class MessageCaretakerFragment extends Fragment implements View.OnClickLi
                     photoURI = null;
                     userImageClick();
                 } else if (blockBy.equals(session.getUserID())) {
-                    Toast.makeText(getContext(), "You blocked " + fullname + ". " + "Can't send any image", Toast.LENGTH_SHORT).show();
+                    Constant.snackbarTop(coordinateLay, "You blocked " + fullname + ". " + "Can't send any image.");
                 } else if (!blockBy.equals("")) {
-                    Toast.makeText(getContext(), "You are blocked by " + session.getFullName() + ". " + "Can't send any image.", Toast.LENGTH_SHORT).show();
+                    Constant.snackbarTop(coordinateLay, "You are blocked by " + session.getFullName() + ". " + "Can't send any image.");
                 }
                 break;
-            /*case R.id.iv_for_delete:
+            case R.id.iv_for_deleteChat:
                 chatDeleteDialog();
                 break;
             case R.id.iv_for_block:
                 blockUserDialog();
-                break;*/
+                break;
         }
     }
 
@@ -734,19 +597,16 @@ public class MessageCaretakerFragment extends Fragment implements View.OnClickLi
                 @Override
                 public void onResponse(NetworkResponse response) {
                     String data = new String(response.data);
-                    Log.e("Response", data);
 
                     try {
                         JSONObject jsonObject = new JSONObject(data);
-
                         String status = jsonObject.getString("status");
-                        String message = jsonObject.getString("message");
 
                         if (status.equalsIgnoreCase("success")) {
                             String mySufferer = jsonObject.getString("mySufferer");
-                            MySuffererList mySuffererList = new Gson().fromJson(mySufferer.toString(), MySuffererList.class);
+                            MySuffererList mySuffererList = new Gson().fromJson(mySufferer, MySuffererList.class);
                             uID = mySuffererList.userId;
-
+                            fullname = mySuffererList.name;
 
                             if (uID != null) {
                                 if (Integer.parseInt(uID) > Integer.parseInt(session.getUserID())) {
@@ -757,20 +617,41 @@ public class MessageCaretakerFragment extends Fragment implements View.OnClickLi
                             }
 
                             chatRef = FirebaseDatabase.getInstance().getReference().child("chat_rooms/" + chatNode);
-                            databaseReference = FirebaseDatabase.getInstance().getReference().child("BlockUsers/" + chatNode);
+                            databaseReference = FirebaseDatabase.getInstance().getReference().child("block_users/" + chatNode);
+                            msgCountRef = FirebaseDatabase.getInstance().getReference().child("massage_count/" + uID);
+                            msgCountRefMy = FirebaseDatabase.getInstance().getReference().child("massage_count/" + session.getUserID());
+                            msgCountRefMy.setValue(new MessageCount().setValue(0));
 
+                            getBlockList();
                             getMessageList(pDialog);
+
+                            FirebaseDatabase.getInstance().getReference().child("users").child(uID).child("firebaseToken").addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.getValue() != null) {
+                                        OtherFirebaseToken = dataSnapshot.getValue().toString();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
+                            messageCount();
+                        } else {
+                            Constant.snackbar(recycler_view, getString(R.string.no_sufferer));
+                            pDialog.dismiss();
                         }
 
                     } catch (Throwable t) {
-                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                        t.printStackTrace();
                     }
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    NetworkResponse networkResponse = error.networkResponse;
-                    Log.i("Error", networkResponse + "");
                     Constant.errorHandle(error, getActivity());
                     pDialog.dismiss();
                     error.printStackTrace();
@@ -779,11 +660,10 @@ public class MessageCaretakerFragment extends Fragment implements View.OnClickLi
 
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<String, String>();
+                    Map<String, String> headers = new HashMap<>();
                     headers.put("authToken", session.getAuthToken());
                     return headers;
                 }
-
             };
 
             multipartRequest.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));

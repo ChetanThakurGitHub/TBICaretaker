@@ -25,11 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Author: Dharmraj Acharya
- * Date: 06/09/2016
- * Email: dharmrajacharya@gmail.com
- */
 public final class ImagePicker {
 
     public static final int PICK_IMAGE_REQUEST_CODE = 234; // the number doesn't matter

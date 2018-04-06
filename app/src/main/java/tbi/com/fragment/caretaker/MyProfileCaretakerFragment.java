@@ -13,9 +13,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import tbi.com.R;
-import tbi.com.fragment.sufferer.MyProfileSufferFragment;
 import tbi.com.session.Session;
-import tbi.com.vollyemultipart.VolleySingleton;
 
 public class MyProfileCaretakerFragment extends Fragment implements View.OnClickListener {
     private ImageView iv_for_profileImage, nav_image;
@@ -26,21 +24,10 @@ public class MyProfileCaretakerFragment extends Fragment implements View.OnClick
         // Required empty public constructor
     }
 
-    public static MyProfileCaretakerFragment newInstance(String param1) {
-        MyProfileCaretakerFragment fragment = new MyProfileCaretakerFragment();
-        Bundle args = new Bundle();
-        args.putString("param1", param1);
-        fragment.setArguments(args);
-        return fragment;
+    public static MyProfileCaretakerFragment newInstance() {
+        return new MyProfileCaretakerFragment();
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            String mParam1 = getArguments().getString("param1");
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

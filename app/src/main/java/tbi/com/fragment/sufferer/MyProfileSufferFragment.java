@@ -25,21 +25,10 @@ public class MyProfileSufferFragment extends Fragment implements View.OnClickLis
         // Required empty public constructor
     }
 
-    public static MyProfileSufferFragment newInstance(String param1) {
-        MyProfileSufferFragment fragment = new MyProfileSufferFragment();
-        Bundle args = new Bundle();
-        args.putString("param1", param1);
-        fragment.setArguments(args);
-        return fragment;
+    public static MyProfileSufferFragment newInstance() {
+        return new MyProfileSufferFragment();
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            String mParam1 = getArguments().getString("param1");
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

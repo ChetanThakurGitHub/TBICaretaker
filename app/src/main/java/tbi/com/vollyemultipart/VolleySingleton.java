@@ -11,9 +11,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
-/**
- * Created by dharmraj on 19/10/16.
- */
 public class VolleySingleton {
 
     private static final String TAG = VolleySingleton.class.getSimpleName();

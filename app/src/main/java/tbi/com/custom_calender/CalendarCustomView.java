@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Locale;
 
 import tbi.com.R;
-import tbi.com.custom_calender.activity.CalanderSuffererActivity;
 import tbi.com.helper.MonthDecoratorData;
 
 public class CalendarCustomView extends LinearLayout {

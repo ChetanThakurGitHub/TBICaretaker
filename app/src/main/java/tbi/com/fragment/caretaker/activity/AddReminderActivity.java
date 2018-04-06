@@ -48,7 +48,6 @@ import tbi.com.vollyemultipart.VolleySingleton;
 public class AddReminderActivity extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
     private static final String TAG = AddReminderActivity.class.getSimpleName();
-
     private ImageView iv_for_backIco, iv_for_calender, iv_for_menu, iv_for_edit, iv_for_more, iv_for_delete;
     private EditText ed_for_tittle, ed_for_description;
     private TextView tv_for_date, tv_for_time, tv_for_tittle, tv_for_disCount, tv_for_titleCount;
@@ -56,8 +55,7 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
     private Button btn_for_addReminder;
     private AllReminderList editReminder;
     private int mmonth = -1, mhour = -1, mminute = -1;
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-M-d", Locale.getDefault());
-    private SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd MMM yyy", Locale.getDefault());
+    private SimpleDateFormat dateFormat, dateFormat2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +65,8 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
         iv_for_backIco.setOnClickListener(this);
         btn_for_addReminder.setOnClickListener(this);
 
-        // dateFormat=new SimpleDateFormat("yyyy-M-d",Locale.getDefault());
+        dateFormat = new SimpleDateFormat("yyyy-M-d", Locale.getDefault());
+        dateFormat2 = new SimpleDateFormat("dd MMM yyy", Locale.getDefault());
 
         iv_for_calender.setVisibility(View.GONE);
         iv_for_menu.setVisibility(View.GONE);
@@ -95,7 +94,8 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                tv_for_disCount.setText(100 - s.length() + "");
+                int text = 100 - s.length();
+                tv_for_disCount.setText(text + "");
             }
 
             @Override
@@ -111,7 +111,8 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                tv_for_titleCount.setText(50 - s.length() + "");
+                int text = 50 - s.length();
+                tv_for_titleCount.setText(text + "");
             }
 
             @Override
@@ -119,7 +120,6 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
             }
         };
         ed_for_tittle.addTextChangedListener(textWatcher);
-
     }
 
     private void initView() {
@@ -208,7 +208,7 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
         Calendar c2 = Calendar.getInstance();
 
         try {
-            if (mhour == -1) {
+            if (editReminder != null && !editReminder.title.equals("")) {
                 strToDate = dateFormat2.parse(date);
                 currentDate = dateFormat2.parse(sDate2);
 
@@ -228,7 +228,7 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
                     e.printStackTrace();
                 }
 
-            } else if (mhour != -1) {
+            } else {
                 strToDate = dateFormat.parse(date);
                 currentDate = dateFormat.parse(sDate);
 
@@ -240,36 +240,9 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
             e.printStackTrace();
         }
 
-       /* if (mhour==-1){
-            try{
-                SimpleDateFormat displayFormat = new SimpleDateFormat("HH:mm",Locale.US);
-                SimpleDateFormat parseFormat = new SimpleDateFormat("hh:mm a",Locale.US);
-                Date editTime = parseFormat.parse(time);
-                String editTimeFormat=displayFormat.format(editTime);
-                String[] getEditTime=editTimeFormat.split(":");
+        if (currentDate != null && strToDate != null) {
 
-                mhour= Integer.parseInt(getEditTime[0]);
-                mminute= Integer.parseInt(getEditTime[1]);
-
-                c2.set(Calendar.HOUR_OF_DAY, mhour);
-                c2.set(Calendar.MINUTE, mminute);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-
-        }else{
-            c2.set(Calendar.HOUR_OF_DAY, mhour);
-            c2.set(Calendar.MINUTE, mminute);
-        }*/
-
-
-        if (currentDate != null && strToDate != null && !currentDate.equals("") && !strToDate.equals("")) {
-
-            Log.e("DATE CHECK SAME", date + " " + sDate);
-            Log.e("DATE CHECK AFTER", strToDate + " " + currentDate);
-            Log.e("TIME CHECK", c2.getTimeInMillis() + " " + c1.getTimeInMillis());
-
-            if (date.contains(sDate)) {
+            if (date.contains(sDate) | date.contains(sDate2)) {
                 //current date
                 if (c2.getTimeInMillis() > c1.getTimeInMillis()) {
                     if (editReminder != null && !editReminder.title.equals("")) {
@@ -290,9 +263,7 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
             } else {
                 Toast.makeText(this, "You can't update with past date", Toast.LENGTH_SHORT).show();
             }
-
         }
-
     }
 
     public void addReminderAPI(final String title, final String date, final String time, final String description) {
@@ -306,7 +277,6 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
                 @Override
                 public void onResponse(NetworkResponse response) {
                     String data = new String(response.data);
-                    Log.e("Response", data);
 
                     try {
                         JSONObject jsonObject = new JSONObject(data);
@@ -324,7 +294,7 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
                         }
 
                     } catch (Throwable t) {
-                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                        t.printStackTrace();
                     }
                     pDialog.dismiss();
                 }
@@ -332,7 +302,6 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     NetworkResponse networkResponse = error.networkResponse;
-                    Log.i("Error", networkResponse + "");
                     Constant.errorHandle(error, AddReminderActivity.this);
                     Constant.snackbar(mainLayout, networkResponse + "");
                     pDialog.dismiss();
@@ -341,7 +310,7 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
             }) {
                 @Override
                 protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<String, String>();
+                    Map<String, String> params = new HashMap<>();
                     params.put("title", title);
                     params.put("date", date);
                     params.put("time", time);
@@ -387,7 +356,6 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
                             Constant.snackbar(mainLayout, message);
                             Toast.makeText(AddReminderActivity.this, message, Toast.LENGTH_SHORT).show();
                             finish();
-
                         } else {
                             Constant.snackbar(mainLayout, message);
                         }

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,20 +47,8 @@ public class NotificationsCaretakerFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static NotificationsCaretakerFragment newInstance(String param1) {
-        NotificationsCaretakerFragment fragment = new NotificationsCaretakerFragment();
-        Bundle args = new Bundle();
-        args.putString("param1", param1);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            String mParam1 = getArguments().getString("param1");
-        }
+    public static NotificationsCaretakerFragment newInstance() {
+        return new NotificationsCaretakerFragment();
     }
 
     @Override
@@ -145,7 +132,7 @@ public class NotificationsCaretakerFragment extends Fragment {
                         }
 
                     } catch (Throwable t) {
-                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                        t.printStackTrace();
                     }
                     pDialog.dismiss();
                 }
@@ -162,7 +149,7 @@ public class NotificationsCaretakerFragment extends Fragment {
 
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<String, String>();
+                    Map<String, String> headers = new HashMap<>();
                     headers.put("authToken", session.getAuthToken());
                     return headers;
                 }
