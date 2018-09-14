@@ -5,7 +5,7 @@
     android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="tbi.com.fragment.sufferer.activity.EditProfileSuffererActivity">
+    tools:context="tbi.org.fragment.sufferer.activity.EditProfileSuffererActivity">
 
     <include
         android:id="@+id/toolbar"

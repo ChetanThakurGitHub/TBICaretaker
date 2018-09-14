@@ -4,7 +4,7 @@
     android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="tbi.com.activity.ForgotPassActivity">
+    tools:context="tbi.org.activity.ForgotPassActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"

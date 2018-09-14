@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/splash_background"
-    tools:context="tbi.com.broadcastreceiver.activity.NetworkErrorActivity">
+    tools:context="tbi.org.broadcastreceiver.activity.NetworkErrorActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -8,17 +8,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:285876685050:android:6876a6c8cfae36e6",
+        "mobilesdk_app_id": "1:285876685050:android:fc8022d878612534",
         "android_client_info": {
-          "package_name": "tbi.com"
+          "package_name": "tbi.org"
         }
       },
       "oauth_client": [
         {
-          "client_id": "285876685050-vqut3evb8o0dlmjj0a5pd164si5359nj.apps.googleusercontent.com",
+          "client_id": "285876685050-s9othfsm5fc3472kl3b2nffdmmtd79s5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "tbi.com",
+            "package_name": "tbi.org",
             "certificate_hash": "7fd9061001ba87771764d100a2b80450c2e83219"
           }
         },
@@ -40,15 +40,15 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
+              "client_id": "285876685050-k0n60b98sg2sd61tlfh23ff6vaehvd3m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
               "client_id": "285876685050-3ejetiv1h12ioamkqcv5l9j26psb3vo1.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.ios.TBICareTaker"
               }
-            },
-            {
-              "client_id": "285876685050-k0n60b98sg2sd61tlfh23ff6vaehvd3m.apps.googleusercontent.com",
-              "client_type": 3
             }
           ]
         },

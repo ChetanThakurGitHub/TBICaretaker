@@ -4,7 +4,6 @@
     <style name="MyCustomTheme" parent="AppTheme">
         <item name="colorPrimary">@color/one</item>
         <item name="colorPrimaryDark">@color/one</item>
-        <item name="android:windowLightStatusBar">true</item>
         <item name="android:statusBarColor">@color/transparent</item>
     </style>
 

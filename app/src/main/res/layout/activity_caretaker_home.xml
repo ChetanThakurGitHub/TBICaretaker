@@ -75,7 +75,6 @@
 
             </LinearLayout>
 
-
             <TextView
                 android:id="@+id/tv_for_logout"
                 android:layout_width="match_parent"

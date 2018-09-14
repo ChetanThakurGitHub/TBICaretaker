@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context="tbi.com.fragment.sufferer.MyCaretakerFragment">
+    tools:context="tbi.org.fragment.sufferer.MyCaretakerFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -102,6 +102,7 @@
                         android:id="@+id/tv_for_emailId"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
                         android:layout_marginLeft="@dimen/_5sdp"
                         android:layout_marginTop="@dimen/_10sdp"

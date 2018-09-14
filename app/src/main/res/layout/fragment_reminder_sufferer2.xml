@@ -4,7 +4,7 @@
     android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="tbi.com.fragment.sufferer.ReminderSuffererFragment">
+    tools:context="tbi.org.fragment.sufferer.ReminderSuffererFragment">
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"

@@ -4,7 +4,7 @@
     android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="tbi.com.fragment.caretaker.activity.AddReminderActivity">
+    tools:context="tbi.org.fragment.caretaker.activity.AddReminderActivity">
 
     <include
         android:id="@+id/toolbar"
@@ -35,6 +35,7 @@
                 android:layout_height="match_parent"
                 android:layout_margin="@dimen/_5sdp"
                 android:elevation="@dimen/_10sdp"
+                app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="@dimen/_10sdp">
 
                 <LinearLayout

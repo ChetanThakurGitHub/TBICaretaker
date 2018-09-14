@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context="tbi.com.fragment.caretaker.MySuffererFragment">
+    tools:context="tbi.org.fragment.caretaker.MySuffererFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"

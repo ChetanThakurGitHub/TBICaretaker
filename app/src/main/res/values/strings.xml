@@ -25,8 +25,8 @@
     <string name="under_development">Under Development Mode....</string>
     <string name="enter_your_email">Enter Your Email</string>
     <string name="forgot_dis">Please enter your email address to retrieve your password.</string>
-    <string name="add_sufferer_dis">To connect with your sufferer</string>
-    <string name="add_sufferers_dis">You need to enter sufferer email id</string>
+    <string name="add_sufferer_dis">To connect with your TBI client</string>
+    <string name="add_sufferers_dis">You need to enter TBI client email id</string>
     <string name="password_title">Reset My Password</string>
     <string name="change_pass_title">Change Password</string>
     <string name="no_connection">No Connection</string>
@@ -35,7 +35,7 @@
     <string name="new_password">New Password</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="who_are_you">Who are you?</string>
-    <string name="surrerer">Sufferer</string>
+    <string name="surrerer">TBI client</string>
     <string name="caretaker">Caretaker</string>
     <string name="login">Login</string>
     <string name="email">Email</string>
@@ -54,11 +54,11 @@
     <string name="notifications">Notifications</string>
     <string name="faq_s">FAQ\'S</string>
     <string name="logout_txt">Logout</string>
-    <string name="my_sufferer">My Sufferer</string>
+    <string name="my_sufferer">My TBI client</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="add_sufferer">Add Sufferer</string>
+    <string name="add_sufferer">Add TBI client</string>
     <string name="no_reminder_added">No Reminder Added</string>
     <string name="no_faq_added">No FAQ\'s Added</string>
     <string name="no_notificaiton">No notification</string>
@@ -83,10 +83,10 @@
     <string name="des_v">Description can not be empty</string>
     <string name="health_info">Health Info</string>
     <string name="age">Age in year</string>
-    <string name="bloos_group">Bloos group</string>
+    <string name="bloos_group">Blood group</string>
     <string name="hight">Height in </string>
     <string name="gender">Gender</string>
-    <string name="remove_sufferer">Remove Sufferer</string>
+    <string name="remove_sufferer">Remove TBI client</string>
     <string name="weight">Weight in kg</string>
     <string name="update">Update</string>
     <string name="old_password">Old Password</string>
@@ -110,13 +110,13 @@
     <string name="write_a_message">Write a message....</string>
     <string name="no_chat_found">No chat found</string>
     <string name="image">Image</string>
-    <string name="upload">Uploading...</string>
+    <string name="upload">Uploading…</string>
     <string name="block">Block</string>
     <string name="block_user">Do you want to block this user</string>
     <string name="unblock_user">Do you want to unblock this user</string>
     <string name="delete_chat">Do you want to delete chat</string>
     <string name="male">Male</string>
-    <string name="no_sufferer">Please add sufferer</string>
+    <string name="no_sufferer">Please add TBI client</string>
     <string name="no_caretaker">No caretaker added you</string>
     <string name="enter_text">Please enter text</string>
     <string name="a">A-positive</string>

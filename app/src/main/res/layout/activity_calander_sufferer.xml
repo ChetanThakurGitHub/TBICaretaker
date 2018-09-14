@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="tbi.com.custom_calender.activity.CalanderSuffererActivity">
+    tools:context="tbi.org.custom_calender.activity.CalanderSuffererActivity">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -38,7 +38,7 @@
 
     </RelativeLayout>
 
-    <tbi.com.custom_calender.CalendarCustomView
+    <tbi.org.custom_calender.CalendarCustomView
         android:id="@+id/custom_calendar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

@@ -85,7 +85,7 @@
                 android:layout_marginLeft="@dimen/_10sdp"
                 android:fontFamily="@font/montserrat_regular"
                 android:gravity="center"
-                android:text="Select form gallery"
+                android:text="Select from gallery"
                 android:textColor="@color/darkgray"
                 android:textSize="@dimen/_12ssp" />
 

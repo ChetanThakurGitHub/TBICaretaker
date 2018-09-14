@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="tbi.com">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="tbi.org">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -17,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.SplashActivity"
+            android:name="tbi.org.activity.SplashActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,29 +27,31 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".broadcastreceiver.NetworkChangeReceiver">
+        <receiver android:name="tbi.org.broadcastreceiver.NetworkChangeReceiver">
             <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action
+                    android:name="android.net.conn.CONNECTIVITY_CHANGE"
+                    tools:ignore="BatteryLife" />
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
             </intent-filter>
         </receiver>
 
         <activity
-            android:name=".activity.UserSelectionActivity"
+            android:name="tbi.org.activity.UserSelectionActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name=".activity.LoginActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/MyCustomTheme"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
-            android:name=".activity.RegistrationActivity"
+            android:name="tbi.org.activity.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/MyCustomTheme"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name=".activity.main_activity.SuffererHomeActivity"
+            android:name="tbi.org.activity.RegistrationActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MyCustomTheme"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name="tbi.org.activity.main_activity.SuffererHomeActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize">
@@ -58,7 +61,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.main_activity.CaretakerHomeActivity"
+            android:name="tbi.org.activity.main_activity.CaretakerHomeActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize">
@@ -68,28 +71,28 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.ForgotPassActivity"
+            android:name="tbi.org.activity.ForgotPassActivity"
             android:screenOrientation="portrait"
             android:theme="@style/MyCustomTheme"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name=".fragment.caretaker.activity.AddReminderActivity"
+            android:name="tbi.org.fragment.caretaker.activity.AddReminderActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name=".fragment.caretaker.activity.EditProfileCaretakerActivity"
+            android:name="tbi.org.fragment.caretaker.activity.EditProfileCaretakerActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name=".fragment.sufferer.activity.EditProfileSuffererActivity"
+            android:name="tbi.org.fragment.sufferer.activity.EditProfileSuffererActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name=".custom_calender.activity.CalanderSuffererActivity"
+            android:name="tbi.org.custom_calender.activity.CalanderSuffererActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name=".custom_calender.activity.CalanderCaretakerActivity"
+            android:name="tbi.org.custom_calender.activity.CalanderCaretakerActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
 
@@ -98,23 +101,24 @@
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_sufferer_white" />
 
-        <service android:name=".fcm.MyFirebaseMessagingService">
+        <service android:name="tbi.org.fcm.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".fcm.MyFirebaseInstanceIDService">
+        <service android:name="tbi.org.fcm.MyFirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
         <activity
-            android:name=".broadcastreceiver.activity.NetworkErrorActivity"
+            android:name="tbi.org.broadcastreceiver.activity.NetworkErrorActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:theme="@style/SimpleTheme"
             android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity android:name="tbi.org.activity.NotificationRead" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
